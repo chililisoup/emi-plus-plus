@@ -36,6 +36,8 @@ dependencies {
     forge("net.minecraftforge:forge:$forgeVersion")
     val kotlinForForgeVersion: String by project
     implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
+    val emiVersion: String by project
+    modImplementation("dev.emi:emi-forge:$emiVersion")
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionForge")) { isTransitive = false }

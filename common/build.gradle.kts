@@ -9,4 +9,6 @@ dependencies {
     // Do NOT use other classes from Fabric Loader.
     val fabricLoaderVersion: String by project
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+    val emiVersion: String by project
+    modCompileOnly("dev.emi:emi-xplat-intermediary:$emiVersion")
 }

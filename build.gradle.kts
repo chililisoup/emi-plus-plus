@@ -1,8 +1,10 @@
+import io.github.pacifistmc.forgix.plugin.ForgixMergeExtension
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
     kotlin("jvm") version "1.8.22"
     id("architectury-plugin") version "3.4-SNAPSHOT"
+    id("io.github.pacifistmc.forgix") version "1.2.9"
     id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 }
@@ -15,7 +17,7 @@ architectury {
 allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "architectury-plugin")
-    apply(plugin = "maven-publish")
+    apply(plugin = "io.github.pacifistmc.forgix")
 
     val mavenGroup: String by project
     val modVersion: String by project
@@ -25,6 +27,7 @@ allprojects {
     repositories {
         maven("https://maven.parchmentmc.org")
         maven("https://maven.neoforged.net/releases/")
+        maven("https://maven.terraformersmc.com/")
     }
 
     java {
@@ -58,4 +61,23 @@ subprojects {
             parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
         })
     }
+
+//    forgix {
+//        val mavenGroup: String by project
+//        group = mavenGroup
+//        val archivesName: String by project
+//        mergedJarName = archivesName
+//
+//        forgeContainer = ForgeContainer().apply {
+//            jarLocation = "1a"
+//        }
+//    }
+//
+//    tasks.build {
+//        finalizedBy(tasks.mergeJars)
+//    }
+//
+//    tasks.assemble {
+//        finalizedBy(tasks.mergeJars)
+//    }
 }
