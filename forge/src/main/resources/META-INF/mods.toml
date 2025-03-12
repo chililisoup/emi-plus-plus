@@ -1,0 +1,29 @@
+modLoader = "javafml"
+modLoader = "kotlinforforge"
+loaderVersion = "[4.10,)"
+#issueTrackerURL = ""
+license = "MIT Licensed"
+
+[[mods]]
+modId = "emixx"
+version = "${version}"
+displayName = "EMI++"
+authors = "ConcerroX"
+description = '''
+This is an example description! Tell everyone what your mod is about!
+'''
+#logoFile = ""
+
+[[dependencies.emixx]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.emixx]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
