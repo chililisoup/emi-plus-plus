@@ -19,6 +19,8 @@ configurations {
 dependencies {
     val fabricLoaderVersion: String by project
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+    val fabricLanguageKotlinVersion: String by project
+    modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionFabric")) { isTransitive = false }

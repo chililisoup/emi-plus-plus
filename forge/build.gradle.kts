@@ -14,7 +14,7 @@ loom {
 //        convertAccessWideners.set(true)
 //        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
         mixinConfig("emixx-common.mixins.json")
-        mixinConfig("emixx.mixins.json")
+//        mixinConfig("emixx.mixins.json")
     }
 }
 
@@ -27,9 +27,15 @@ configurations {
     developmentForge.extendsFrom(common)
 }
 
+repositories {
+    maven("https://thedarkcolour.github.io/KotlinForForge/")
+}
+
 dependencies {
     val forgeVersion: String by project
     forge("net.minecraftforge:forge:$forgeVersion")
+    val kotlinForForgeVersion: String by project
+    implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionForge")) { isTransitive = false }
