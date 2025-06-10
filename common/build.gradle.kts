@@ -1,14 +1,20 @@
+val enabledPlatforms: String by rootProject
 architectury {
-    val enabledPlatforms: String by project
     common(enabledPlatforms.split(","))
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/emixx.accesswidener")
+}
+
+val fabricLoaderVersion: String by rootProject
+val mixinExtrasVersion: String by rootProject
+val emiVersion: String by rootProject
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
     // Do NOT use other classes from Fabric Loader.
-    val fabricLoaderVersion: String by project
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
-    val emiVersion: String by project
+    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:$mixinExtrasVersion")!!)!!)
     modCompileOnly("dev.emi:emi-xplat-intermediary:$emiVersion")
 }

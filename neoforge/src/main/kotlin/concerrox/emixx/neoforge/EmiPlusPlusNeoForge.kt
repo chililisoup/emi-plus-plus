@@ -1,10 +1,10 @@
-package concerrox.emixx.forge
+package concerrox.emixx.neoforge
 
 import concerrox.emixx.EmiPlusPlus
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.fml.common.Mod
 
 @Mod(EmiPlusPlus.MOD_ID)
-object EmiPlusPlusForge {
+object EmiPlusPlusNeoForge {
 
     init {
         EmiPlusPlus.initialize()

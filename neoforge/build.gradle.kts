@@ -4,7 +4,7 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    neoForge()
 }
 
 loom {
@@ -13,26 +13,34 @@ loom {
 
 val common: Configuration by configurations.creating
 val shadowCommon: Configuration by configurations.creating
-val developmentFabric: Configuration by configurations.getting
+val developmentNeoForge: Configuration by configurations.getting
 configurations {
     compileOnly.configure { extendsFrom(common) }
     runtimeOnly.configure { extendsFrom(common) }
-    developmentFabric.extendsFrom(common)
+    developmentNeoForge.extendsFrom(common)
 }
 
-val fabricLoaderVersion: String by rootProject
-val fabricLanguageKotlinVersion: String by project
+repositories {
+    maven("https://thedarkcolour.github.io/KotlinForForge/")
+}
+
+val neoForgeVersion: String by project
+val kotlinForForgeVersion: String by project
+val emiVersion: String by project
 dependencies {
-    modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
-//    modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
+    neoForge("net.neoforged:neoforge:$neoForgeVersion")
+    implementation("thedarkcolour:kotlinforforge-neoforge:$kotlinForForgeVersion") {
+        exclude(group = "net.neoforged.fancymodloader", module = "loader")
+    }
+    modImplementation("dev.emi:emi-neoforge:$emiVersion")
 
     common(project(":common", "namedElements")) { isTransitive = false }
-    shadowCommon(project(":common", "transformProductionFabric")) { isTransitive = false }
+    shadowCommon(project(":common", "transformProductionNeoForge")) { isTransitive = false }
 }
 
 tasks.processResources {
     inputs.property("version", project.version)
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/neoforge.mods.toml") {
         expand(mapOf(
             "version" to project.version,
         ))
