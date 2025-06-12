@@ -33,6 +33,7 @@ dependencies {
         exclude(group = "net.neoforged.fancymodloader", module = "loader")
     }
     modImplementation("dev.emi:emi-neoforge:$emiVersion")
+    modImplementation(fileTree("libs"))
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionNeoForge")) { isTransitive = false }
@@ -54,4 +55,5 @@ tasks.shadowJar {
 
 tasks.remapJar {
     inputFile.set(tasks.shadowJar.get().archiveFile)
+    atAccessWideners.add("emixx.accesswidener")
 }

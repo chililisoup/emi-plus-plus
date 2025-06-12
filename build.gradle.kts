@@ -34,9 +34,10 @@ subprojects {
     }
 
     repositories {
-        maven("https://maven.parchmentmc.org")
-        maven("https://maven.neoforged.net/releases/")
-        maven("https://maven.terraformersmc.com/")
+        maven("https://maven.parchmentmc.org") // ParchmentMC
+        maven("https://maven.neoforged.net/releases/") // NeoForge
+        maven("https://maven.terraformersmc.com/") // EMI
+        maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge Config API Port
     }
 
     dependencies {

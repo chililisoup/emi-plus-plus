@@ -3,8 +3,8 @@
 	"package": "concerrox.emixx.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"minVersion": "0.8",
-	"client": ["AbstractContainerScreenMixin", "EmiScreenManagerMixin", "GuiGraphicsMixin", "ScreenMixin"],
-	"mixins": ["EmiExclusionAreasMixin", "EmiScreenManager$ScreenSpaceAccessor", "EmiScreenManagerAccessor"],
+	"client": ["EmiScreenManagerMixin"],
+	"mixins": ["EmiScreenManagerAccessor", "EmiSidebarsMixin", "SidebarPanelMixin"],
 	"injectors": {
 		"defaultRequire": 1
 	}

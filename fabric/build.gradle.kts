@@ -22,9 +22,11 @@ configurations {
 
 val fabricLoaderVersion: String by rootProject
 val fabricLanguageKotlinVersion: String by project
+val forgeConfigApiPortVersion: String by project
 dependencies {
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 //    modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
+    modImplementation("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeConfigApiPortVersion")
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionFabric")) { isTransitive = false }
