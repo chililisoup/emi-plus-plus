@@ -6,7 +6,7 @@ import concerrox.emixx.gui.components.ImageButtonWidget
 import concerrox.emixx.gui.components.tabs.ItemTab
 import concerrox.emixx.gui.components.tabs.ItemTabManager
 import concerrox.emixx.gui.components.tabs.ItemTabNavigationBar
-import concerrox.emixx.stack.ItemCollectionStack
+import concerrox.emixx.stack.ItemGroupEmiStack
 import concerrox.emixx.stack.TextStack
 import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
@@ -14,6 +14,7 @@ import dev.emi.emi.registry.EmiStackList
 import dev.emi.emi.runtime.EmiDrawContext
 import dev.emi.emi.screen.EmiScreenBase
 import dev.emi.emi.screen.EmiScreenManager
+import dev.emi.emi.search.EmiSearch
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.CreativeModeTabs
@@ -94,6 +95,7 @@ object EmiPlusPlusScreenManager {
             updateTabs()
             tabNavigationBar.selectTab(0, false)
             tabNavigationBar.tabButtons[0].isFocused = true
+            onTabSelected(tabNavigationBar.tabs[0] as ItemTab)
         }
     }
 
@@ -154,16 +156,17 @@ object EmiPlusPlusScreenManager {
         EmiPlusPlus.LOGGER.info("onStackInteraction: $ingredient")
         when (ingredient) {
             is TextStack -> {}
-            is ItemCollectionStack -> {
+            is ItemGroupEmiStack -> {
+                val stacks = EmiSearch.stacks.toMutableList()
                 if (ingredient.isExpanded) {
                     for (i in 0 until ingredient.items.size) {
-//                        myStacks.removeAt(myStacks.indexOf(ingredient) + 1)
+                        stacks.removeAt(stacks.indexOf(ingredient) + 1)
                     }
-//                    EmiPlusPlusStackManager.updateStacks(myStacks)
                 } else {
-//                    myStacks.addAll(myStacks.indexOf(ingredient) + 1, ingredient.items)
-//                    EmiPlusPlusStackManager.updateStacks(myStacks)
+                    stacks.addAll(stacks.indexOf(ingredient) + 1, ingredient.items)
                 }
+                EmiSearch.stacks = stacks
+                EmiScreenManager.recalculate()
                 ingredient.isExpanded = !ingredient.isExpanded
             }
 

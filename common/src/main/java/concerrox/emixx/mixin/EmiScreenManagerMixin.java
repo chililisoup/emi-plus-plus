@@ -3,7 +3,7 @@ package concerrox.emixx.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import concerrox.emixx.gui.EmiPlusPlusScreenManager;
-import concerrox.emixx.stack.ItemCollectionStack;
+import concerrox.emixx.stack.ItemGroupEmiStack;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.config.SidebarType;
@@ -65,7 +65,7 @@ public class EmiScreenManagerMixin {
         method = "mouseReleased"
     )
     private static boolean modifyMouseReleased(EmiIngredient instance, Operation<Boolean> original) {
-        if (instance instanceof ItemCollectionStack)
+        if (instance instanceof ItemGroupEmiStack)
             EmiPlusPlusScreenManager.INSTANCE.onStackInteraction(instance);
         return original.call(instance);
     }

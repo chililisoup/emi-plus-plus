@@ -2,6 +2,7 @@ package concerrox.emixx
 
 import com.mojang.logging.LogUtils
 import concerrox.emixx.config.ContentData
+import concerrox.emixx.data.ItemGroupDataManager
 import net.minecraft.resources.ResourceLocation
 
 fun id(path: String): ResourceLocation {
@@ -18,6 +19,8 @@ object EmiPlusPlus {
         this.PLATFORM = platform
 
         ContentData.doSth()
+
+        ItemGroupDataManager.initialize()
     }
 
     fun initializeClient() {
