@@ -2,7 +2,7 @@ package concerrox.emixx.gui.components.tabs
 
 import com.mojang.blaze3d.systems.RenderSystem
 import concerrox.emixx.gui.GuiGraphicsUtils
-import concerrox.emixx.id
+import concerrox.emixx.res
 import dev.emi.emi.runtime.EmiDrawContext
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.TabButton
@@ -11,7 +11,7 @@ class ItemTabButton(private val tabManager: ItemTabManager, private val tab: Ite
     TabButton(tabManager, tab, width, height) {
 
     companion object {
-        private val TEXTURE = id("textures/gui/buttons.png")
+        private val TEXTURE = res("textures/gui/buttons.png")
     }
 
     override fun onClick(mouseX: Double, mouseY: Double) {

@@ -1,6 +1,6 @@
 package concerrox.emixx.mixin;
 
-import concerrox.emixx.EmiPlusPlusStackManager;
+import concerrox.emixx.StackManager;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.registry.EmiStackList;
@@ -18,7 +18,7 @@ public class EmiSidebarsMixin {
     @Inject(at = @At("RETURN"), method = "getStacks", cancellable = true)
     private static void getStacks(SidebarType type, CallbackInfoReturnable<List<? extends EmiIngredient>> cir) {
         if (cir.getReturnValue() == EmiStackList.filteredStacks)
-            cir.setReturnValue(EmiPlusPlusStackManager.INSTANCE.getSourceStacks());
+            cir.setReturnValue(StackManager.INSTANCE.getSourceStacks());
     }
 
 }

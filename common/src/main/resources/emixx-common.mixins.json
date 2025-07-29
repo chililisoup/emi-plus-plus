@@ -1,11 +1,19 @@
 {
-	"required": true,
-	"package": "concerrox.emixx.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"minVersion": "0.8",
-	"client": ["BoMScreenMixin", "EmiScreenManagerMixin"],
-	"mixins": ["EmiScreenManagerAccessor", "EmiSidebarsMixin", "SidebarPanelMixin"],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "concerrox.emixx.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "BoMScreenMixin",
+    "EmiScreenManagerMixin"
+  ],
+  "mixins": [
+    "EmiReloadManagerReloadWorkerMixin",
+    "EmiSearchSearchWorkerMixin",
+    "EmiSidebarsMixin",
+    "SidebarPanelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

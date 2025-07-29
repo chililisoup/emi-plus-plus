@@ -43,14 +43,6 @@ public class EmiScreenManagerMixin {
         EmiPlusPlusScreenManager.INSTANCE.addEmiPlusPlusWidgets(screen);
     }
 
-    @Inject(at = @At("TAIL"), method = "renderWidgets")
-    private static void renderEmiPlusPlusWidgets(
-        EmiDrawContext context, int mouseX, int mouseY, float delta,
-        EmiScreenBase base, CallbackInfo ci
-    ) {
-        EmiPlusPlusScreenManager.INSTANCE.renderEmiPlusPlusWidgets(context, mouseX, mouseY, delta, base);
-    }
-
     @Inject(at = @At("RETURN"), method = "mouseScrolled", cancellable = true)
     private static void mouseScrolled(
         double mouseX, double mouseY, double amount,
@@ -69,27 +61,5 @@ public class EmiScreenManagerMixin {
             EmiPlusPlusScreenManager.INSTANCE.onStackInteraction(instance);
         return original.call(instance);
     }
-
-    //    @WrapOperation(
-    //        at = @At(
-    //            value = "INVOKE", target = "Ldev/emi/emi/api/EmiApi;displayRecipes(Ldev/emi/emi/api/stack/EmiIngredient;)V"
-    //        ), method = "stackInteraction"
-    //    )
-    //    private static void modifyStackInteraction(EmiIngredient fav, Operation<Void> original) {
-    //        EmiPlusPlusScreenManager.INSTANCE.onStackInteraction(fav);
-    //    }
-    //
-    //    @ModifyExpressionValue(
-    //        at = @At(value = "INVOKE", target = "Ldev/emi/emi/api/stack/EmiIngredient;isEmpty()Z"),
-    //        method = "stackInteraction"
-    //    )
-    //    private static boolean modifyIsFavorite(
-    //        boolean original, EmiStackInteraction stack,
-    //        Function<EmiBind, Boolean> function
-    //    ) {
-    //        if (stack.getStack() instanceof ItemCollectionStack)
-    //            return false;
-    //        return original;
-    //    }
 
 }

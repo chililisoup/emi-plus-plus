@@ -1,7 +1,7 @@
 package concerrox.emixx.gui.components
 
 import com.mojang.blaze3d.systems.RenderSystem
-import concerrox.emixx.id
+import concerrox.emixx.res
 import dev.emi.emi.EmiPort
 import dev.emi.emi.EmiRenderHelper
 import dev.emi.emi.runtime.EmiDrawContext
@@ -15,7 +15,7 @@ import java.util.function.IntSupplier
 import java.util.function.Supplier
 
 
-class ImageButtonWidget : SizedButtonWidget {
+class ImageButton : SizedButtonWidget {
 
     // Main constructor
     constructor(
@@ -60,7 +60,7 @@ class ImageButtonWidget : SizedButtonWidget {
     ) : super(x, y, width, height, u, v, isActive, action, vOffset, text)
 
     init {
-        texture = id("textures/gui/buttons.png")
+        texture = res("textures/gui/buttons.png")
     }
 
     override fun renderWidget(raw: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {

@@ -1,6 +1,9 @@
 package concerrox.emixx.stack
 
+import concerrox.emixx.data.StackGroup
 import concerrox.emixx.gui.GuiGraphicsUtils
+import dev.emi.emi.EmiPort
+import dev.emi.emi.EmiRenderHelper
 import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.runtime.EmiDrawContext
 import net.minecraft.client.gui.GuiGraphics
@@ -8,12 +11,13 @@ import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-class ItemGroupEmiStack() : EmiStack() {
+class ItemGroupEmiStack(val group: StackGroup) : EmiStack() {
 
     var isExpanded = false
     val items = mutableListOf<EmiStack>()
 
     override fun render(raw: GuiGraphics, x: Int, y: Int, delta: Float, flags: Int) {
+
         EmiDrawContext.wrap(raw).apply {
             push()
             matrices().translate(0F, 0F, 50F)
@@ -23,7 +27,10 @@ class ItemGroupEmiStack() : EmiStack() {
             matrices().translate(0F, 0F, 52F)
             GuiGraphicsUtils.renderItem(raw, items[0].itemStack, x + 0.5F, y + 3.5F, 12F)
             matrices().translate(0F, 0F, 100F)
-            drawText(Component.literal("+"), x + 11, y + 10, -1)
+
+            EmiRenderHelper.renderAmount(this, x, y, EmiPort.literal("+"))
+
+//            drawText(Component.literal("+"), x + 11, y + 10, -1)
             pop()
         }
     }

@@ -3,7 +3,7 @@ package concerrox.emixx.gui.components.tabs
 import com.google.common.collect.ImmutableList
 import com.mojang.blaze3d.systems.RenderSystem
 import concerrox.emixx.gui.EmiPlusPlusScreenManager
-import concerrox.emixx.id
+import concerrox.emixx.res
 import dev.emi.emi.runtime.EmiDrawContext
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.tabs.TabNavigationBar
@@ -49,7 +49,7 @@ class ItemTabNavigationBar(private val tabManager: ItemTabManager) :
     }
 
     companion object {
-        private val TEXTURE = id("textures/gui/buttons.png")
+        private val TEXTURE = res("textures/gui/buttons.png")
     }
 
 }

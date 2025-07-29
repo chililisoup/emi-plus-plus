@@ -1,30 +1,26 @@
 package concerrox.emixx
 
 import com.mojang.logging.LogUtils
-import concerrox.emixx.config.ContentData
-import concerrox.emixx.data.ItemGroupDataManager
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
+import org.slf4j.Logger
 
-fun id(path: String): ResourceLocation {
-    return ResourceLocation.fromNamespaceAndPath(EmiPlusPlus.MOD_ID, path)
-}
+fun res(path: String): ResourceLocation = ResourceLocation.fromNamespaceAndPath(EmiPlusPlus.MOD_ID, path)
+fun text(type: String, path: String): MutableComponent = Component.translatable("$type.${EmiPlusPlus.MOD_ID}.$path")
 
 object EmiPlusPlus {
 
     const val MOD_ID = "emixx"
-    var LOGGER = LogUtils.getLogger()
-    lateinit var PLATFORM: EmiPlusPlusPlatform
+    internal var LOGGER: Logger = LogUtils.getLogger()
+    internal lateinit var PLATFORM: EmiPlusPlusPlatform
 
     fun initialize(platform: EmiPlusPlusPlatform) {
-        this.PLATFORM = platform
-
-        ContentData.doSth()
-
-        ItemGroupDataManager.initialize()
+        PLATFORM = platform
     }
 
-    fun initializeClient() {
-
+    fun initializeClient(platform: EmiPlusPlusPlatform) {
+        PLATFORM = platform
     }
 
 }

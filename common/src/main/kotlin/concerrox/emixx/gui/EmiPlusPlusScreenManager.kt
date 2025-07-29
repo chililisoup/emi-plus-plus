@@ -1,40 +1,45 @@
 package concerrox.emixx.gui
 
 import concerrox.emixx.EmiPlusPlus
-import concerrox.emixx.EmiPlusPlusStackManager
-import concerrox.emixx.gui.components.ImageButtonWidget
+import concerrox.emixx.StackManager
+import concerrox.emixx.content.stackgroup.gui.StackGroupConfigScreen
+import concerrox.emixx.gui.components.ImageButton
+import concerrox.emixx.gui.components.Switch
 import concerrox.emixx.gui.components.tabs.ItemTab
 import concerrox.emixx.gui.components.tabs.ItemTabManager
 import concerrox.emixx.gui.components.tabs.ItemTabNavigationBar
 import concerrox.emixx.stack.ItemGroupEmiStack
 import concerrox.emixx.stack.TextStack
 import dev.emi.emi.api.stack.EmiIngredient
-import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.registry.EmiStackList
 import dev.emi.emi.runtime.EmiDrawContext
 import dev.emi.emi.screen.EmiScreenBase
 import dev.emi.emi.screen.EmiScreenManager
 import dev.emi.emi.search.EmiSearch
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTabs
 
-
 object EmiPlusPlusScreenManager {
+
+    internal const val ENTRY_SIZE = 18
 
     const val EMI_PLUS_PLUS_HEADER_HEIGHT = 18
     private const val EMI_HEADER_HEIGHT = 18
     const val TILE_SIZE = 18
-    private val FILTERED_CREATIVE_MODE_TABS = setOf(CreativeModeTabs.INVENTORY, CreativeModeTabs.HOTBAR,
-        CreativeModeTabs.OP_BLOCKS, CreativeModeTabs.SEARCH).map(BuiltInRegistries.CREATIVE_MODE_TAB::get)
+    private val FILTERED_CREATIVE_MODE_TABS = setOf(
+        CreativeModeTabs.INVENTORY, CreativeModeTabs.HOTBAR, CreativeModeTabs.OP_BLOCKS, CreativeModeTabs.SEARCH
+    ).map(BuiltInRegistries.CREATIVE_MODE_TAB::get)
 
     private var emiScreen: Screen? = null
     private var indexSpace: EmiScreenManager.ScreenSpace? = null
 
-    private val tabManager = ItemTabManager({ emiScreen?.addRenderableWidget(it) },
-        { emiScreen?.removeWidget(it) }).apply {
-        onTabSelectedListener = this@EmiPlusPlusScreenManager::onTabSelected
-    }
+    private val tabManager =
+        ItemTabManager({ emiScreen?.addRenderableWidget(it) }, { emiScreen?.removeWidget(it) }).apply {
+            onTabSelectedListener = this@EmiPlusPlusScreenManager::onTabSelected
+        }
     private val tabNavigationBar = ItemTabNavigationBar(tabManager)
     private var currentTabPage = 0
     private var lastTabPage = 0
@@ -47,8 +52,8 @@ object EmiPlusPlusScreenManager {
 
     private var scrollAccumulator = 0.0
 
-    private val buttonPrevious = ImageButtonWidget(16, 16, 0, 0, { true }, { previousPage() })
-    private val buttonNext = ImageButtonWidget(16, 16, 16, 0, { true }, { nextPage() })
+    private val buttonPrevious = ImageButton(16, 16, 0, 0, { true }, { previousPage() })
+    private val buttonNext = ImageButton(16, 16, 16, 0, { true }, { nextPage() })
 
 //    private val btn = SizedButtonWidget(0, 0, 20, 20, 184, 0, { true }, { _ ->
 //        val space = EmiScreenManager.getSearchPanel().getSpaces()[0]
@@ -101,9 +106,12 @@ object EmiPlusPlusScreenManager {
 
     private fun onTabSelected(tab: ItemTab) {
         if (tab.creativeModeTab == indexCreativeModeTab) {
-            EmiPlusPlusStackManager.updateStacks(EmiStackList.filteredStacks) // Use EMI's default index stacks
+            StackManager.updateStacks(EmiStackList.filteredStacks) // Use EMI's default index stacks
         } else {
-            tab.creativeModeTab?.displayItems?.map(EmiStack::of)?.let(EmiPlusPlusStackManager::updateStacks)
+            StackManager.updateStacks(EmiStackList.filteredStacks)
+//            tab.creativeModeTab?.displayItems?.map(EmiStack::of)?.let(EmiPlusPlusStackManager::updateStacks)
+
+//            EmiPlusPlusStackManager.updateStacks(EmiStackList.filteredStacks)
         }
     }
 
@@ -116,17 +124,26 @@ object EmiPlusPlusScreenManager {
 
     fun addEmiPlusPlusWidgets(screen: Screen) {
         emiScreen = screen
+
+        emiScreen?.addRenderableWidget(Switch.Builder(Component.literal("hi")).build {
+            x = 50
+            y = 50
+            onCheckedChangeListener = Switch.OnCheckedChangeListener { _, _ ->
+                Minecraft.getInstance().setScreen(StackGroupConfigScreen())
+            }
+        })
+
 //        screen.addWidget(btn)
 //        btn.x = 50
 //        btn.y = 50
     }
 
-    fun renderEmiPlusPlusWidgets(context: EmiDrawContext, mouseX: Int, mouseY: Int, delta: Float, base: EmiScreenBase) {
-//        context.push()
-//        context.matrices().translate(0.0, 0.0, 100.0)
-//        btn.render(context.raw(), mouseX, mouseY, delta)
-//        context.pop()
-    }
+//    fun renderEmiPlusPlusWidgets(context: EmiDrawContext, mouseX: Int, mouseY: Int, delta: Float, base: EmiScreenBase) {
+////        context.push()
+////        context.matrices().translate(0.0, 0.0, 100.0)
+////        btn.render(context.raw(), mouseX, mouseY, delta)
+////        context.pop()
+//    }
 
     fun onMouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {
         val indexSpace = indexSpace ?: return false
@@ -134,7 +151,8 @@ object EmiPlusPlusScreenManager {
         val sa = scrollAccumulator.toInt() // Decelerate the scroll so that it doesn't get too fast
         scrollAccumulator %= 1
         val xRange = indexSpace.tx.toDouble()..(indexSpace.tx + indexSpace.tw * TILE_SIZE).toDouble()
-        val yRange = (indexSpace.ty - EMI_HEADER_HEIGHT - EMI_PLUS_PLUS_HEADER_HEIGHT).toDouble()..(indexSpace.ty - EMI_HEADER_HEIGHT).toDouble()
+        val yRange =
+            (indexSpace.ty - EMI_HEADER_HEIGHT - EMI_PLUS_PLUS_HEADER_HEIGHT).toDouble()..(indexSpace.ty - EMI_HEADER_HEIGHT).toDouble()
         if (xRange.contains(mouseX) && yRange.contains(mouseY)) {
             if (sa > 0) previousPage() else if (sa < 0) nextPage()
             return true

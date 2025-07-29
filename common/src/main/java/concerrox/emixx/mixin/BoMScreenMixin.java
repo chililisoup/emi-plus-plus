@@ -21,7 +21,7 @@ public class BoMScreenMixin extends Screen {
 
     @Inject(at = @At("HEAD"), method = "render")
     private void render(GuiGraphics raw, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        this.renderBackground(raw, mouseX, mouseY, delta);
+        renderBackground(raw, mouseX, mouseY, delta); // Render the vanilla blurry background
     }
 
     @WrapOperation(
@@ -31,6 +31,7 @@ public class BoMScreenMixin extends Screen {
         EmiDrawContext instance, int x, int y, int width, int height, int color,
         Operation<Void> original
     ) {
+        // Passed so that the dark background will not be rendered
     }
 
     @WrapOperation(
@@ -40,6 +41,7 @@ public class BoMScreenMixin extends Screen {
         ), method = "render"
     )
     private void modifyMouseReleased(BoMScreen instance, GuiGraphics guiGraphics, Operation<Void> original) {
+        // Passed so that the dirt background will not be rendered
     }
 
 }
