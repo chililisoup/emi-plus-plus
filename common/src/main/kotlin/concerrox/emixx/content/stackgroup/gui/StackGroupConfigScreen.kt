@@ -1,5 +1,7 @@
 package concerrox.emixx.content.stackgroup.gui
 
+import concerrox.emixx.config.EmiPlusPlusConfig
+import concerrox.emixx.content.stackgroup.StackGroupManager
 import concerrox.emixx.text
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -14,10 +16,10 @@ import net.minecraft.network.chat.CommonComponents
 
 class StackGroupConfigScreen : Screen(text("gui", "stack_group_config")) {
 
+    private val disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get().toMutableSet()
+
     private val layout = HeaderAndFooterLayout(this)
-    private val list = StackGroupGridList(
-        this, layout.headerHeight, 0, StackGroupGridList.TripleEntry.HEIGHT
-    )
+    private val list = StackGroupGridList(this, disabledStackGroups)
     private val tabManager = TabManager(::addRenderableWidget, ::removeWidget)
     private val tabNavigationBar = TabNavigationBar.builder(tabManager, width).addTabs(
         PrebuiltTab()
@@ -26,11 +28,16 @@ class StackGroupConfigScreen : Screen(text("gui", "stack_group_config")) {
     override fun init() {
         layout.addTitleHeader(title, font)
         layout.addToContents(list)
-        layout.addToFooter(Button.builder(CommonComponents.GUI_DONE) { onClose() }.width(200).build())
+        layout.addToFooter(Button.builder(CommonComponents.GUI_DONE) {
+            EmiPlusPlusConfig.disabledStackGroups.set(disabledStackGroups.toList())
+            EmiPlusPlusConfig.save()
+            StackGroupManager.reload()
+            onClose()
+        }.width(200).build())
         layout.visitWidgets(::addRenderableWidget)
 
 //        addRenderableWidget(tabNavigationBar)
-        tabNavigationBar.selectTab(0, false)
+//        tabNavigationBar.selectTab(0, false)
         repositionElements()
 
         list.add()

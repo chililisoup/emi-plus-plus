@@ -96,10 +96,14 @@ object StackGroupManager {
     private val stackGroups = mutableListOf<StackGroup>()
     internal var groupToGroupStacks = mapOf<StackGroup, ItemGroupEmiStack>()
     internal var groupedStacks = listOf<EmiIngredient>()
+    internal var disabledStackGroups = listOf<String>()
 
     fun reload() {
+        disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get()
         stackGroups.clear()
         stackGroups.addAll(DEFAULT_STACK_GROUPS)
+        groupToGroupStacks = stackGroups.associateWith { group -> ItemGroupEmiStack(group) }
+//        stackGroups.addAll(DEFAULT_STACK_GROUPS.filter { disabledStackGroups.contains(it.id) })
         STACK_GROUP_DIRECTORY_PATH.listDirectoryEntries("*.json").forEach {
             val json = JsonParser.parseString(it.readText())
             SimpleItemGroup.CODEC.parse(JsonOps.INSTANCE, json).ifSuccess { group -> stackGroups += group }
@@ -109,18 +113,20 @@ object StackGroupManager {
 
     internal fun buildGroupedStacks(source: List<EmiIngredient>): List<EmiIngredient> {
         val result = mutableListOf<EmiIngredient>()
-        groupToGroupStacks = stackGroups.associateWith { group -> ItemGroupEmiStack(group) }
         val addedGroupStacks = mutableListOf<ItemGroupEmiStack>()
+        groupToGroupStacks = stackGroups.associateWith { group -> ItemGroupEmiStack(group) }
         for (stack in source) {
             var shouldAddStack = true
             for (stackGroup in stackGroups) {
                 val groupStack = groupToGroupStacks[stackGroup]!!
                 if (stack is EmiStack && stackGroup.match(stack)) {
-                    shouldAddStack = false // Once a stack matches a stackGroup, it shouldn't be added to the index page
+                    if (!disabledStackGroups.contains(stackGroup.id)) shouldAddStack =
+                        false // Once a stack matches a stackGroup, it shouldn't be added to the index page
                     groupStack.items += stack
                     if (groupStack !in addedGroupStacks) {
                         addedGroupStacks += groupStack
-                        result += groupStack
+                        if (!disabledStackGroups.contains(stackGroup.id))
+                            result += groupStack
                     }
                 }
             }

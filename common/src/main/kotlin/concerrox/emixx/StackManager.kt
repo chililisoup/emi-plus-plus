@@ -2,6 +2,7 @@ package concerrox.emixx
 
 import concerrox.emixx.content.stackgroup.StackGroupManager
 import dev.emi.emi.api.stack.EmiIngredient
+import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.registry.EmiStackList
 import dev.emi.emi.screen.EmiScreenManager
 import dev.emi.emi.search.EmiSearch
@@ -23,8 +24,8 @@ object StackManager {
     }
 
     fun updateStacks(stacks: List<EmiIngredient>) {
-        sourceStacks = stacks.toMutableList()
-        EmiSearch.stacks = StackGroupManager.groupedStacks
+        EmiSearch.stacks = StackGroupManager.buildGroupedStacks(sourceStacks)
+//        EmiSearch.stacks = StackGroupManager.groupedStacks
         EmiScreenManager.recalculate()
     }
 

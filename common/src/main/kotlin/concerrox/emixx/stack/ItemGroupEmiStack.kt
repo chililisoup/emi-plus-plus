@@ -21,11 +21,11 @@ class ItemGroupEmiStack(val group: StackGroup) : EmiStack() {
         EmiDrawContext.wrap(raw).apply {
             push()
             matrices().translate(0F, 0F, 50F)
-            GuiGraphicsUtils.renderItem(raw, items[2].itemStack, x + 3.5F, y + 0.5F, 12F)
+            if (items.size >= 3) GuiGraphicsUtils.renderItem(raw, items[2].itemStack, x + 3.5F, y + 0.5F, 12F)
             matrices().translate(0F, 0F, 51F)
-            GuiGraphicsUtils.renderItem(raw, items[1].itemStack, x + 2F, y + 2F, 12F)
+            if (items.size >= 2) GuiGraphicsUtils.renderItem(raw, items[1].itemStack, x + 2F, y + 2F, 12F)
             matrices().translate(0F, 0F, 52F)
-            GuiGraphicsUtils.renderItem(raw, items[0].itemStack, x + 0.5F, y + 3.5F, 12F)
+            if (items.size >= 1) GuiGraphicsUtils.renderItem(raw, items[0].itemStack, x + 0.5F, y + 3.5F, 12F)
             matrices().translate(0F, 0F, 100F)
 
             EmiRenderHelper.renderAmount(this, x, y, EmiPort.literal("+"))

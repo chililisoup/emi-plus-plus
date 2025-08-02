@@ -2,24 +2,21 @@ package concerrox.emixx.gui
 
 import concerrox.emixx.EmiPlusPlus
 import concerrox.emixx.StackManager
-import concerrox.emixx.content.stackgroup.gui.StackGroupConfigScreen
 import concerrox.emixx.gui.components.ImageButton
-import concerrox.emixx.gui.components.Switch
 import concerrox.emixx.gui.components.tabs.ItemTab
 import concerrox.emixx.gui.components.tabs.ItemTabManager
 import concerrox.emixx.gui.components.tabs.ItemTabNavigationBar
 import concerrox.emixx.stack.ItemGroupEmiStack
 import concerrox.emixx.stack.TextStack
 import dev.emi.emi.api.stack.EmiIngredient
+import dev.emi.emi.api.stack.EmiStack
+import dev.emi.emi.config.EmiConfig
+import dev.emi.emi.config.HeaderType
 import dev.emi.emi.registry.EmiStackList
-import dev.emi.emi.runtime.EmiDrawContext
-import dev.emi.emi.screen.EmiScreenBase
 import dev.emi.emi.screen.EmiScreenManager
 import dev.emi.emi.search.EmiSearch
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTabs
 
 object EmiPlusPlusScreenManager {
@@ -78,7 +75,8 @@ object EmiPlusPlusScreenManager {
         val indexSpace = sidebarPanel.space?.also { indexSpace = it }
         if (emiScreen != null && indexSpace != null) {
             val tx = indexSpace.tx
-            val ty = indexSpace.ty - EMI_HEADER_HEIGHT - EMI_PLUS_PLUS_HEADER_HEIGHT
+            val ty =
+                indexSpace.ty - (if (EmiConfig.rightSidebarHeader == HeaderType.VISIBLE) EMI_HEADER_HEIGHT else 0) - EMI_PLUS_PLUS_HEADER_HEIGHT
             val tw = indexSpace.tw
             tabCount = tw - 2
             emiScreen.addRenderableWidget(buttonPrevious.apply {
@@ -106,12 +104,14 @@ object EmiPlusPlusScreenManager {
 
     private fun onTabSelected(tab: ItemTab) {
         if (tab.creativeModeTab == indexCreativeModeTab) {
-            StackManager.updateStacks(EmiStackList.filteredStacks) // Use EMI's default index stacks
+            StackManager.sourceStacks = EmiStackList.filteredStacks.toMutableList()
         } else {
-            StackManager.updateStacks(EmiStackList.filteredStacks)
-//            tab.creativeModeTab?.displayItems?.map(EmiStack::of)?.let(EmiPlusPlusStackManager::updateStacks)
-
-//            EmiPlusPlusStackManager.updateStacks(EmiStackList.filteredStacks)
+            StackManager.sourceStacks = tab.creativeModeTab?.displayItems?.map(EmiStack::of)!!.toMutableList()
+        }
+        if (indexSpace?.search == true) {
+            EmiSearch.search(EmiScreenManager.search.value)
+        } else {
+            StackManager.updateStacks(StackManager.sourceStacks)
         }
     }
 
@@ -125,13 +125,13 @@ object EmiPlusPlusScreenManager {
     fun addEmiPlusPlusWidgets(screen: Screen) {
         emiScreen = screen
 
-        emiScreen?.addRenderableWidget(Switch.Builder(Component.literal("hi")).build {
-            x = 50
-            y = 50
-            onCheckedChangeListener = Switch.OnCheckedChangeListener { _, _ ->
-                Minecraft.getInstance().setScreen(StackGroupConfigScreen())
-            }
-        })
+//        emiScreen?.addRenderableWidget(Switch.Builder(Component.literal("hi")).build {
+//            x = 50
+//            y = 50
+//            onCheckedChangeListener = Switch.OnCheckedChangeListener { _, _ ->
+//                Minecraft.getInstance().setScreen(StackGroupConfigScreen())
+//            }
+//        })
 
 //        screen.addWidget(btn)
 //        btn.x = 50

@@ -6,6 +6,8 @@ import concerrox.emixx.gui.EmiPlusPlusScreenManager;
 import concerrox.emixx.stack.ItemGroupEmiStack;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.Bounds;
+import dev.emi.emi.config.EmiConfig;
+import dev.emi.emi.config.HeaderType;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.runtime.EmiDrawContext;
 import dev.emi.emi.screen.EmiScreenBase;

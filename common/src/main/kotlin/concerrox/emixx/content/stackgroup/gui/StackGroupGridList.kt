@@ -14,23 +14,29 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-class StackGroupGridList(private val screen: StackGroupConfigScreen, height: Int, y: Int, itemHeight: Int) :
-    ContainerObjectSelectionList<StackGroupGridList.TripleEntry>(
-        Minecraft.getInstance(), screen.width, height, y, itemHeight
-    ) {
+class StackGroupGridList(
+    private val screen: StackGroupConfigScreen, private val disabledStackGroups: MutableSet<String>
+) : ContainerObjectSelectionList<StackGroupGridList.TripleEntry>(
+    Minecraft.getInstance(), screen.width, screen.height, 0, TripleEntry.HEIGHT
+) {
 
     init {
         centerListVertically = false
+        setRenderHeader(true, 16)
     }
 
     override fun getRowWidth() = TripleEntry.WIDTH
     //override fun getListOutlinePadding() = TripleEntry.GUTTER
 
     fun add() {
-        StackGroupManager.groupToGroupStacks.values.chunked(3).forEach { list ->
-            addEntry(TripleEntry(screen, list))
+        StackGroupManager.groupToGroupStacks.values.chunked(3).forEach { triple ->
+            addEntry(TripleEntry(this, triple))
         }
     }
+
+//    override fun getRowTop(index: Int): Int {
+//        return y + TripleEntry.GUTTER * 2 - scrollAmount.toInt() + index * itemHeight + headerHeight
+//    }
 
     class StackGroupEntry(private val triple: TripleEntry, private val stack: ItemGroupEmiStack?) :
         AbstractContainerWidget(
@@ -46,7 +52,16 @@ class StackGroupGridList(private val screen: StackGroupConfigScreen, height: Int
             const val HEIGHT = EmiPlusPlusScreenManager.ENTRY_SIZE * 2 + PADDING * 2 + BORDER_WIDTH * 2
         }
 
-        private val switch = Switch.Builder(Component.empty()).build()
+        private val switch = Switch.Builder(Component.empty())
+            .setChecked(!triple.listWidget.disabledStackGroups.contains(stack!!.group.id)).apply {
+                onCheckedChangeListener = Switch.OnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        triple.listWidget.disabledStackGroups.remove(stack!!.group.id)
+                    } else {
+                        triple.listWidget.disabledStackGroups.add(stack!!.group.id)
+                    }
+                }
+            }.build()
         private val children = mutableListOf(switch)
 
         override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -97,10 +112,10 @@ class StackGroupGridList(private val screen: StackGroupConfigScreen, height: Int
 
     }
 
-    class TripleEntry(private val screen: StackGroupConfigScreen, stack: List<ItemGroupEmiStack>) : Entry<TripleEntry>() {
+    class TripleEntry(val listWidget: StackGroupGridList, stack: List<ItemGroupEmiStack>) : Entry<TripleEntry>() {
 
         companion object {
-            const val GUTTER = 8
+            const val GUTTER = 6
             const val WIDTH = StackGroupEntry.WIDTH * 3 + GUTTER * 2
             const val HEIGHT = StackGroupEntry.HEIGHT + GUTTER * 2
         }
@@ -122,7 +137,7 @@ class StackGroupGridList(private val screen: StackGroupConfigScreen, height: Int
             partialTick: Float
         ) {
             var xOffset = 0
-            val startX = (screen.width - WIDTH) / 2
+            val startX = (listWidget.screen.width - WIDTH) / 2
             for (abstractWidget in children) {
                 abstractWidget.setPosition(startX + xOffset, top)
                 abstractWidget.render(guiGraphics, mouseX, mouseY, partialTick)
