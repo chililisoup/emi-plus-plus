@@ -1,4 +1,4 @@
-package concerrox.emixx.gui.components.tabs
+package concerrox.emixx.content.creativemodetab.gui.itemtab
 
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment

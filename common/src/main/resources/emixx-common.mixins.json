@@ -6,12 +6,14 @@
   "client": [
     "BoMScreenMixin",
     "ConfigScreenMixin",
+    "CreativeModeInventoryScreenMixin",
     "EmiScreenManagerMixin"
   ],
   "mixins": [
     "EmiReloadManagerReloadWorkerMixin",
     "EmiSearchSearchWorkerMixin",
     "EmiSidebarsMixin",
+    "ScreenSpaceMixin",
     "SidebarPanelMixin"
   ],
   "injectors": {

@@ -1,6 +1,6 @@
 package concerrox.emixx.mixin;
 
-import concerrox.emixx.StackManager;
+import concerrox.emixx.content.StackManager;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.registry.EmiStackList;

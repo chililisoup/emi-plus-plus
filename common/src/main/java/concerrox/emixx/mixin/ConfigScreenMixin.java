@@ -1,6 +1,6 @@
 package concerrox.emixx.mixin;
 
-import concerrox.emixx.config.EmiPlusPlusConfigScreenManager;
+import concerrox.emixx.config.ConfigScreenManager;
 import dev.emi.emi.screen.ConfigScreen;
 import dev.emi.emi.screen.widget.config.ConfigSearch;
 import dev.emi.emi.screen.widget.config.ListWidget;
@@ -18,7 +18,7 @@ public class ConfigScreenMixin {
     @ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Ldev/emi/emi/screen/ConfigScreen;addWidget(Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"))
     public GuiEventListener init(GuiEventListener widget) {
         if (widget instanceof ListWidget list)
-            EmiPlusPlusConfigScreenManager.INSTANCE.injectConfigScreen((ConfigScreen) (Object) this, list, this.search);
+            ConfigScreenManager.INSTANCE.injectConfigScreen((ConfigScreen) (Object) this, list, this.search);
         return widget;
     }
 

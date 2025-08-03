@@ -2,15 +2,14 @@ package concerrox.emixx.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import concerrox.emixx.gui.EmiPlusPlusScreenManager;
-import concerrox.emixx.stack.ItemGroupEmiStack;
+import concerrox.emixx.config.EmiPlusPlusConfig;
+import concerrox.emixx.content.ScreenManager;
+import concerrox.emixx.content.StackManager;
+import concerrox.emixx.content.creativemodetab.gui.CreativeModeTabGui;
+import concerrox.emixx.content.stackgroup.EmiGroupStack;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.Bounds;
-import dev.emi.emi.config.EmiConfig;
-import dev.emi.emi.config.HeaderType;
 import dev.emi.emi.config.SidebarType;
-import dev.emi.emi.runtime.EmiDrawContext;
-import dev.emi.emi.screen.EmiScreenBase;
 import dev.emi.emi.screen.EmiScreenManager;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,12 +28,9 @@ public class EmiScreenManagerMixin {
      * Add extra space for the EMI++ header
      */
     @ModifyVariable(at = @At(value = "STORE", ordinal = 0), method = "createScreenSpace", name = "headerOffset")
-    private static int modifyHeaderOffset(
-        int original, EmiScreenManager.SidebarPanel panel, Screen screen,
-        List<Bounds> exclusion
-    ) {
-        if (panel.getType() == SidebarType.INDEX) {
-            return original + EmiPlusPlusScreenManager.EMI_PLUS_PLUS_HEADER_HEIGHT;
+    private static int modifyHeaderOffset(int original, EmiScreenManager.SidebarPanel panel, Screen screen, List<Bounds> exclusion) {
+        if (panel.getType() == SidebarType.INDEX && EmiPlusPlusConfig.enableCreativeModeTabs.get()) {
+            return original + CreativeModeTabGui.CREATIVE_MODE_TAB_HEIGHT;
         } else {
             return original;
         }
@@ -42,25 +38,17 @@ public class EmiScreenManagerMixin {
 
     @Inject(at = @At("HEAD"), method = "addWidgets")
     private static void addEmiPlusPlusWidgets(Screen screen, CallbackInfo ci) {
-        EmiPlusPlusScreenManager.INSTANCE.addEmiPlusPlusWidgets(screen);
+        ScreenManager.INSTANCE.onScreenInitialized(screen);
     }
 
     @Inject(at = @At("RETURN"), method = "mouseScrolled", cancellable = true)
-    private static void mouseScrolled(
-        double mouseX, double mouseY, double amount,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        cir.setReturnValue(
-            cir.getReturnValueZ() || EmiPlusPlusScreenManager.INSTANCE.onMouseScrolled(mouseX, mouseY, amount));
+    private static void mouseScrolled(double mouseX, double mouseY, double amount, CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(cir.getReturnValueZ() || ScreenManager.INSTANCE.onMouseScrolled(mouseX, mouseY, amount));
     }
 
-    @WrapOperation(
-        at = @At(value = "INVOKE", target = "Ldev/emi/emi/api/stack/EmiIngredient;isEmpty()Z", ordinal = 0),
-        method = "mouseReleased"
-    )
+    @WrapOperation(at = @At(value = "INVOKE", target = "Ldev/emi/emi/api/stack/EmiIngredient;isEmpty()Z", ordinal = 0), method = "mouseReleased")
     private static boolean modifyMouseReleased(EmiIngredient instance, Operation<Boolean> original) {
-        if (instance instanceof ItemGroupEmiStack)
-            EmiPlusPlusScreenManager.INSTANCE.onStackInteraction(instance);
+        if (instance instanceof EmiGroupStack) StackManager.INSTANCE.onStackInteraction(instance);
         return original.call(instance);
     }
 

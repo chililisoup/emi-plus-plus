@@ -1,4 +1,4 @@
-package concerrox.emixx.gui.components.tabs
+package concerrox.emixx.content.creativemodetab.gui.itemtab
 
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.tabs.TabManager

@@ -19,7 +19,7 @@ import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue
 import java.util.function.Supplier
 
 
-object EmiPlusPlusConfigScreenManager {
+object ConfigScreenManager {
 
     private val unsavedChanges = mutableMapOf<ConfigValue<*>, Any>()
     private lateinit var configScreen: ConfigScreen

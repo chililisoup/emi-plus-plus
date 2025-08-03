@@ -2,7 +2,7 @@ package concerrox.emixx.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import concerrox.emixx.StackManager;
+import concerrox.emixx.content.StackManager;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.runtime.EmiSidebars;

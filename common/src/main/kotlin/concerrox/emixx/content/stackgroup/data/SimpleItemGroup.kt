@@ -1,4 +1,4 @@
-package concerrox.emixx.data
+package concerrox.emixx.content.stackgroup.data
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder

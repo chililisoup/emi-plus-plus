@@ -7,8 +7,14 @@ import net.minecraft.resources.ResourceLocation
 import org.slf4j.Logger
 
 internal val Minecraft = net.minecraft.client.Minecraft.getInstance()
+
 fun res(path: String): ResourceLocation = ResourceLocation.fromNamespaceAndPath(EmiPlusPlus.MOD_ID, path)
+
 fun text(type: String, path: String): MutableComponent = Component.translatable("$type.${EmiPlusPlus.MOD_ID}.$path")
+
+fun text(type: String, path: String, vararg args: Any): MutableComponent =
+    Component.translatable("$type.${EmiPlusPlus.MOD_ID}.$path", args)
+
 fun text(path: String): MutableComponent = Component.translatable("${EmiPlusPlus.MOD_ID}.$path")
 
 object EmiPlusPlus {

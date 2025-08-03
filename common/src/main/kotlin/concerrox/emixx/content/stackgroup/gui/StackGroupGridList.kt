@@ -1,10 +1,10 @@
 package concerrox.emixx.content.stackgroup.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
+import concerrox.emixx.content.ScreenManager.ENTRY_SIZE
+import concerrox.emixx.content.stackgroup.EmiGroupStack
 import concerrox.emixx.content.stackgroup.StackGroupManager
-import concerrox.emixx.gui.EmiPlusPlusScreenManager
 import concerrox.emixx.gui.components.Switch
-import concerrox.emixx.stack.ItemGroupEmiStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractContainerWidget
@@ -38,7 +38,7 @@ class StackGroupGridList(
 //        return y + TripleEntry.GUTTER * 2 - scrollAmount.toInt() + index * itemHeight + headerHeight
 //    }
 
-    class StackGroupEntry(private val triple: TripleEntry, private val stack: ItemGroupEmiStack?) :
+    class StackGroupEntry(private val triple: TripleEntry, private val stack: EmiGroupStack?) :
         AbstractContainerWidget(
             0, 0, WIDTH, HEIGHT, Component.empty()
         ) {
@@ -48,8 +48,8 @@ class StackGroupGridList(
                 ResourceLocation.withDefaultNamespace("textures/gui/inworld_menu_list_background.png")
             private const val PADDING = 8
             private const val BORDER_WIDTH = 1
-            const val WIDTH = EmiPlusPlusScreenManager.ENTRY_SIZE * 8 + PADDING * 2 + BORDER_WIDTH * 2
-            const val HEIGHT = EmiPlusPlusScreenManager.ENTRY_SIZE * 2 + PADDING * 2 + BORDER_WIDTH * 2
+            const val WIDTH = ENTRY_SIZE * 8 + PADDING * 2 + BORDER_WIDTH * 2
+            const val HEIGHT = ENTRY_SIZE * 2 + PADDING * 2 + BORDER_WIDTH * 2
         }
 
         private val switch = Switch.Builder(Component.empty())
@@ -72,10 +72,10 @@ class StackGroupGridList(
             stack?.let {
                 guiGraphics.drawString(Minecraft.getInstance().font, stack.group.id, startX, startY + 2, 0xFFFFFF)
                 var itemX = startX
-                val itemY = startY + EmiPlusPlusScreenManager.ENTRY_SIZE
+                val itemY = startY + ENTRY_SIZE
                 stack.items.take(8).forEach {
                     it.render(guiGraphics, itemX, itemY, partialTick)
-                    itemX += EmiPlusPlusScreenManager.ENTRY_SIZE
+                    itemX += ENTRY_SIZE
                 }
             }
             switch.setPosition(x + WIDTH - switch.width - BORDER_WIDTH - PADDING, startY)
@@ -112,7 +112,7 @@ class StackGroupGridList(
 
     }
 
-    class TripleEntry(val listWidget: StackGroupGridList, stack: List<ItemGroupEmiStack>) : Entry<TripleEntry>() {
+    class TripleEntry(val listWidget: StackGroupGridList, stack: List<EmiGroupStack>) : Entry<TripleEntry>() {
 
         companion object {
             const val GUTTER = 6

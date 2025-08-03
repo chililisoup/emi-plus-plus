@@ -21,15 +21,19 @@ class EmiPlusPlusConfig(builder: ModConfigSpec.Builder) {
             CONFIG_SPEC.save()
         }
 
+        lateinit var enableCreativeModeTabs: ModConfigSpec.BooleanValue
+        lateinit var syncSelectedCreativeModeTab: ModConfigSpec.BooleanValue
+        lateinit var enableStackGroups: ModConfigSpec.BooleanValue
         lateinit var disabledStackGroups: ModConfigSpec.ConfigValue<List<String>>
     }
 
     init {
         builder.group("creativeModeTabs") {
-            define("enableCreativeModeTabs", true)
+            enableCreativeModeTabs = define("enableCreativeModeTabs", true)
+            syncSelectedCreativeModeTab = define("syncSelectedCreativeModeTab", true)
         }
         builder.group("stackGroups") {
-            define("enableStackGroups", true)
+            enableStackGroups = define("enableStackGroups", true)
             disabledStackGroups = defineListAllowEmpty("disabledStackGroups", {
                 listOf(
                     "hello",

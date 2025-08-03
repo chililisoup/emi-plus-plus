@@ -1,4 +1,4 @@
-package concerrox.emixx.data
+package concerrox.emixx.content.stackgroup.data
 
 import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.WeatheringCopperBulbBlock
 import net.minecraft.world.level.block.WeatheringCopperFullBlock
 import net.minecraft.world.level.block.WeatheringCopperGrateBlock
 
-internal class CopperBlockItemGroup : StackGroup("copper_blocks", StackGroup.Type.ITEM) {
+internal class CopperBlockItemGroup : StackGroup("copper_blocks", Type.ITEM) {
 
     companion object {
         private val WAXED_COPPER_BLOCK_ITEMS = arrayOf(

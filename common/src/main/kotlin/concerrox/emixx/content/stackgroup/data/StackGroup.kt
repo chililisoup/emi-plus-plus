@@ -1,4 +1,4 @@
-package concerrox.emixx.data
+package concerrox.emixx.content.stackgroup.data
 
 import dev.emi.emi.api.stack.EmiIngredient
 import net.minecraft.core.registries.Registries

@@ -1,6 +1,6 @@
 package concerrox.emixx.mixin;
 
-import concerrox.emixx.gui.EmiPlusPlusScreenManager;
+import concerrox.emixx.content.ScreenManager;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.screen.EmiScreenManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,13 +17,13 @@ public abstract class SidebarPanelMixin {
     @Shadow
     public abstract SidebarType getType();
 
+    @Shadow
+    public EmiScreenManager.ScreenSpace space;
+
     @Inject(at = @At("TAIL"), method = "setSpaces")
-    private void addEmiPlusPlusWidgets(
-        EmiScreenManager.ScreenSpace main, List<EmiScreenManager.ScreenSpace> subpanels,
-        CallbackInfo ci
-    ) {
+    private void addEmiPlusPlusWidgets(EmiScreenManager.ScreenSpace main, List<EmiScreenManager.ScreenSpace> subpanels, CallbackInfo ci) {
         if (getType() == SidebarType.INDEX) {
-            EmiPlusPlusScreenManager.INSTANCE.add2(EmiScreenManager.SidebarPanel.class.cast(this));
+            ScreenManager.INSTANCE.onIndexScreenSpaceCreated(space);
         }
     }
 

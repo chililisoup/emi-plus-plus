@@ -1,4 +1,4 @@
-package concerrox.emixx.gui
+package concerrox.emixx.util
 
 import com.mojang.blaze3d.platform.Lighting
 import net.minecraft.CrashReport

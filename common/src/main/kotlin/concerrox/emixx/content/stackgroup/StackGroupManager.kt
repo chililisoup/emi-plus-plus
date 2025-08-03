@@ -3,15 +3,15 @@ package concerrox.emixx.content.stackgroup
 import com.google.gson.JsonParser
 import com.mojang.serialization.JsonOps
 import concerrox.emixx.config.EmiPlusPlusConfig
-import concerrox.emixx.data.*
+import concerrox.emixx.content.stackgroup.data.*
 import concerrox.emixx.registry.ModTags
-import concerrox.emixx.stack.ItemGroupEmiStack
 import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.registry.EmiStackList
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
+import kotlin.io.path.createDirectories
 import kotlin.io.path.div
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readText
@@ -94,17 +94,17 @@ object StackGroupManager {
     )
 
     private val stackGroups = mutableListOf<StackGroup>()
-    internal var groupToGroupStacks = mapOf<StackGroup, ItemGroupEmiStack>()
-    internal var groupedStacks = listOf<EmiIngredient>()
-    internal var disabledStackGroups = listOf<String>()
+    internal var groupToGroupStacks = mapOf<StackGroup, EmiGroupStack>()
+    private var groupedStacks = listOf<EmiIngredient>()
+    private var disabledStackGroups = listOf<String>()
 
     fun reload() {
         disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get()
         stackGroups.clear()
         stackGroups.addAll(DEFAULT_STACK_GROUPS)
-        groupToGroupStacks = stackGroups.associateWith { group -> ItemGroupEmiStack(group) }
+        groupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
 //        stackGroups.addAll(DEFAULT_STACK_GROUPS.filter { disabledStackGroups.contains(it.id) })
-        STACK_GROUP_DIRECTORY_PATH.listDirectoryEntries("*.json").forEach {
+        STACK_GROUP_DIRECTORY_PATH.createDirectories().listDirectoryEntries("*.json").forEach {
             val json = JsonParser.parseString(it.readText())
             SimpleItemGroup.CODEC.parse(JsonOps.INSTANCE, json).ifSuccess { group -> stackGroups += group }
             groupedStacks = buildGroupedStacks(EmiStackList.filteredStacks)
@@ -113,8 +113,8 @@ object StackGroupManager {
 
     internal fun buildGroupedStacks(source: List<EmiIngredient>): List<EmiIngredient> {
         val result = mutableListOf<EmiIngredient>()
-        val addedGroupStacks = mutableListOf<ItemGroupEmiStack>()
-        groupToGroupStacks = stackGroups.associateWith { group -> ItemGroupEmiStack(group) }
+        val addedGroupStacks = mutableListOf<EmiGroupStack>()
+        groupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
         for (stack in source) {
             var shouldAddStack = true
             for (stackGroup in stackGroups) {
@@ -122,7 +122,7 @@ object StackGroupManager {
                 if (stack is EmiStack && stackGroup.match(stack)) {
                     if (!disabledStackGroups.contains(stackGroup.id)) shouldAddStack =
                         false // Once a stack matches a stackGroup, it shouldn't be added to the index page
-                    groupStack.items += stack
+                    groupStack.items += GroupedEmiStack(stack, stackGroup)
                     if (groupStack !in addedGroupStacks) {
                         addedGroupStacks += groupStack
                         if (!disabledStackGroups.contains(stackGroup.id))
