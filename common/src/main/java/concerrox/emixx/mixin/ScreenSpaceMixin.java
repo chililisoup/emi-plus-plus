@@ -2,9 +2,12 @@ package concerrox.emixx.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import concerrox.emixx.content.Layout;
+import concerrox.emixx.content.StackManager;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.EmiRenderHelper;
 import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.bom.BoM;
 import dev.emi.emi.config.EmiConfig;
 import dev.emi.emi.config.SidebarType;
@@ -16,8 +19,12 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import static concerrox.emixx.content.ScreenManager.ENTRY_SIZE;
 
@@ -62,11 +69,14 @@ public abstract class ScreenSpaceMixin {
 
     @Shadow
     @Final
-    public int tx;
+    public int tw;
 
-    @Shadow
-    @Final
-    public int ty;
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void createGrid(int tx, int ty, int tw, int th, boolean rtl, List<Bounds> exclusion,
+                            Supplier<SidebarType> typeSupplier, boolean search, CallbackInfo ci) {
+        if (getType() == SidebarType.INDEX)
+            StackManager.INSTANCE.setStackGrid$emixx_common(new EmiStack[th + 9][tw + 9]);
+    }
 
     /**
      * @author ConcerroX
@@ -76,7 +86,8 @@ public abstract class ScreenSpaceMixin {
     public void render(EmiDrawContext context, int mouseX, int mouseY, float delta, int startIndex) {
         if (startIndex != Layout.INSTANCE.getSi()) {
             Layout.INSTANCE.setSi(startIndex);
-            Layout.INSTANCE.setF(false);
+            Layout.INSTANCE.setTextureDirty(true);
+            Layout.INSTANCE.setClean(false);
         }
 
         if (pageSize > 0) {
@@ -104,8 +115,8 @@ public abstract class ScreenSpaceMixin {
                     int cy = getY(xo, yo);
                     EmiIngredient stack = stacks.get(i++);
 
-                    if (getType() == SidebarType.INDEX && !Layout.INSTANCE.isF())
-                        Layout.INSTANCE.getLayout().put(yo, xo, stack);
+                    if (getType() == SidebarType.INDEX && !Layout.INSTANCE.isClean())
+                        StackManager.INSTANCE.getStackGrid$emixx_common()[yo][xo] = (EmiStack) stack;
 
                     batcher.render(stack, context.raw(), cx + 1, cy + 1, delta);
                     if (getType() == SidebarType.INDEX) {

@@ -111,22 +111,21 @@ object StackGroupManager {
         }
     }
 
-    internal fun buildGroupedStacks(source: List<EmiIngredient>): List<EmiIngredient> {
-        val result = mutableListOf<EmiIngredient>()
+    internal fun buildGroupedStacks(source: List<EmiStack>): List<EmiStack> {
+        val result = mutableListOf<EmiStack>()
         val addedGroupStacks = mutableListOf<EmiGroupStack>()
         groupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
         for (stack in source) {
             var shouldAddStack = true
             for (stackGroup in stackGroups) {
                 val groupStack = groupToGroupStacks[stackGroup]!!
-                if (stack is EmiStack && stackGroup.match(stack)) {
+                if (stackGroup.match(stack)) {
                     if (!disabledStackGroups.contains(stackGroup.id)) shouldAddStack =
                         false // Once a stack matches a stackGroup, it shouldn't be added to the index page
                     groupStack.items += GroupedEmiStack(stack, stackGroup)
                     if (groupStack !in addedGroupStacks) {
                         addedGroupStacks += groupStack
-                        if (!disabledStackGroups.contains(stackGroup.id))
-                            result += groupStack
+                        if (!disabledStackGroups.contains(stackGroup.id)) result += groupStack
                     }
                 }
             }

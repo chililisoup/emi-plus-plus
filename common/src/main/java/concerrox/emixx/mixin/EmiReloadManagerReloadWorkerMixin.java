@@ -1,9 +1,10 @@
 package concerrox.emixx.mixin;
 
-import concerrox.emixx.EmiPlusPlus;
-import concerrox.emixx.EmiPlusPlusKt;
+import concerrox.emixx.content.StackManager;
 import concerrox.emixx.content.stackgroup.StackGroupManager;
+import dev.emi.emi.runtime.EmiLog;
 import dev.emi.emi.runtime.EmiReloadManager;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,11 +13,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "dev.emi.emi.runtime.EmiReloadManager$ReloadWorker", remap = false)
 public class EmiReloadManagerReloadWorkerMixin {
 
-    @Inject(method = "run", at = @At(value = "TAIL", target = "Ldev/emi/emi/registry/EmiStackList;bake()V"))
+    /**
+     * Reload stack lists for EMI++ after they have been baked
+     */
+    @Inject(method = "run",
+            at = @At(value = "INVOKE", target = "Ldev/emi/emi/registry/EmiStackList;bake()V", shift = At.Shift.AFTER))
     public void run(CallbackInfo ci) {
-        EmiPlusPlus.INSTANCE.getLOGGER$emixx_common().info("Starting EMI++ reloading…");
-        EmiReloadManager.step(EmiPlusPlusKt.text("gui", "baking_item_groups"), 10_000);
+        EmiLog.LOG.info("[EMI++] Starting EMI++ reload...");
+        var step = Component.literal("Baking stack groups");
+        EmiLog.LOG.info("[EMI++] {}", step.getString());
+        EmiReloadManager.reloadStep = step;
+        EmiReloadManager.reloadWorry = System.currentTimeMillis() + 10_000;
+
         StackGroupManager.INSTANCE.reload();
+        StackManager.INSTANCE.reload$emixx_common();
     }
 
 }

@@ -40,7 +40,7 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
                 fill(x - 1, y - 1, ENTRY_SIZE, 1, 0xFFFFFFFF.toInt())
                 fill(x + ENTRY_SIZE - 2, y - 1, 1, ENTRY_SIZE, 0xFFFFFFFF.toInt())
                 fill(x - 1, y + ENTRY_SIZE - 2, ENTRY_SIZE, 1, 0xFFFFFFFF.toInt())
-                fill(x, y, ENTRY_SIZE - 2, ENTRY_SIZE - 2, 0x30FFFFFF.toInt())
+                fill(x, y, ENTRY_SIZE - 2, ENTRY_SIZE - 2, 0x30FFFFFF)
             }
 
             if (items.size >= 3) GuiGraphicsUtils.renderItem(raw, items[2].itemStack, x + 3.5F, y + 0.5F, 12F)

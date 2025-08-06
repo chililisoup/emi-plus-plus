@@ -6,7 +6,6 @@ import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-
 class BlankStack : EmiStack() {
 
     override fun render(draw: GuiGraphics, x: Int, y: Int, delta: Float, flags: Int) {}

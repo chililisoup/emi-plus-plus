@@ -7,9 +7,7 @@ import concerrox.emixx.content.StackManager
 import concerrox.emixx.content.creativemodetab.gui.CreativeModeTabGui
 import concerrox.emixx.content.creativemodetab.gui.itemtab.ItemTab
 import dev.emi.emi.api.stack.EmiStack
-import dev.emi.emi.registry.EmiStackList
 import dev.emi.emi.screen.EmiScreenManager
-import dev.emi.emi.search.EmiSearch
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen
 import net.minecraft.core.registries.BuiltInRegistries
@@ -59,25 +57,20 @@ object CreativeModeTabManager {
     internal fun onTabSelected(tab: ItemTab) {
         val screen = Minecraft.screen
         // Pass if it's selected by clicking the tab bar from vanilla
-        if (!isSelectingEmiPlusPlusCreativeModeTabByVanilla
-            && EmiPlusPlusConfig.syncSelectedCreativeModeTab.get()
-            && tab.creativeModeTab != null
-            && screen is CreativeModeInventoryScreen
-        ) {
+        if (!isSelectingEmiPlusPlusCreativeModeTabByVanilla && EmiPlusPlusConfig.syncSelectedCreativeModeTab.get() && tab.creativeModeTab != null && screen is CreativeModeInventoryScreen) {
             isSelectingVanillaCreativeInventoryTabByEmiPlusPlus = true
             screen.selectTab(tab.creativeModeTab)
             isSelectingVanillaCreativeInventoryTabByEmiPlusPlus = false
         }
 
-        if (tab.creativeModeTab == indexCreativeModeTab) {
-            StackManager.sourceStacks = EmiStackList.filteredStacks.toMutableList()
-        } else {
-            StackManager.sourceStacks = tab.creativeModeTab?.displayItems?.map(EmiStack::of)!!.toMutableList()
+        val sourceStacks = if (tab.creativeModeTab == indexCreativeModeTab) StackManager.indexStacks else {
+            // Tabs with null creativeModeTab will not be selected as it's not visible.
+            tab.creativeModeTab!!.displayItems.map(EmiStack::of)
         }
         if (ScreenManager.isSearching) {
-            EmiSearch.search(EmiScreenManager.search.value)
+            StackManager.search(sourceStacks, EmiScreenManager.search.value)
         } else {
-            StackManager.updateStacks()
+            StackManager.updateSourceStacks(sourceStacks)
         }
     }
 

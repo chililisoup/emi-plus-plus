@@ -7,10 +7,8 @@
     "BoMScreenMixin",
     "ConfigScreenMixin",
     "CreativeModeInventoryScreenMixin",
-    "EmiScreenManagerMixin"
-  ],
-  "mixins": [
     "EmiReloadManagerReloadWorkerMixin",
+    "EmiScreenManagerMixin",
     "EmiSearchSearchWorkerMixin",
     "EmiSidebarsMixin",
     "ScreenSpaceMixin",
@@ -18,5 +16,10 @@
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  },
+  "mixins": [
+    "EmiApiMixin",
+    "EmiScreenManagerSidebarPanelMixin",
+    "RecipeCostTooltipComponentMixin"
+  ]
 }

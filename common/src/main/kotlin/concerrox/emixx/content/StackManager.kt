@@ -4,37 +4,103 @@ import concerrox.emixx.EmiPlusPlus
 import concerrox.emixx.content.stackgroup.EmiGroupStack
 import concerrox.emixx.content.stackgroup.StackGroupManager
 import dev.emi.emi.api.stack.EmiIngredient
+import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.registry.EmiStackList
 import dev.emi.emi.screen.EmiScreenManager
 import dev.emi.emi.search.EmiSearch
 
+typealias Array2D<T> = Array<Array<T>>
+
 object StackManager {
 
-    var sourceStacks: MutableList<EmiIngredient> = EmiStackList.filteredStacks.toMutableList()
+    /**
+     * Just the unprocessed index stacks from EMI.
+     */
+    internal var indexStacks = listOf<EmiStack>()
 
-    fun onEmiIndexSearch(
-        query: String, searchedStacks: List<EmiIngredient>
-    ): List<EmiIngredient> {
-        return buildDisplayedStacks(searchedStacks)
+    /**
+     * The original stacks to be searched, could be from the index, a creative mode tab, or a custom collection tab.
+     */
+    internal var sourceStacks = listOf<EmiStack>()
+
+    /**
+     * The stacks that have been searched
+     */
+    internal var searchedStacks = listOf<EmiStack>()
+
+    /**
+     * Stacks that include stack groups and stack collections.
+     */
+    private var groupedStacks = listOf<EmiStack>()
+
+    /**
+     * Index stacks that include stack groups and stack collections, so we don't have to group them every time.
+     */
+    private var groupedIndexStacks = listOf<EmiStack>()
+
+    /**
+     * Stacks that are already laid out on the grid, and are going to be displayed.
+     */
+    internal var displayedStacks = mutableListOf<EmiStack>()
+
+    /**
+     * A layout for the stacks -------------------, recreated every time when first rendered
+     */
+    internal var stackGrid = arrayOf(arrayOf<EmiStack?>())
+
+    /**
+     * --------------------------------------
+     */
+    internal var stackTextureGrid = mutableListOf<Layout.REn>()
+
+    internal fun reload() {
+        indexStacks = EmiStackList.filteredStacks
+        updateSourceStacks(indexStacks)
     }
 
-    private fun buildDisplayedStacks(source: List<EmiIngredient>): List<EmiIngredient> {
-        return StackGroupManager.buildGroupedStacks(mutableListOf<EmiIngredient>().apply {
-            addAll(source)
-        })
+    /**
+     * Build the stacks from a custom source
+     */
+    internal fun updateSourceStacks(sourceStacks: List<EmiStack>) {
+        this.sourceStacks = sourceStacks
+        buildStacks(sourceStacks)
     }
 
-    fun updateStacks() {
-        EmiSearch.stacks = StackGroupManager.buildGroupedStacks(sourceStacks)
-//        EmiSearch.stacks = StackGroupManager.groupedStacks
-        EmiScreenManager.recalculate()
+    internal fun search(sourceStacks: List<EmiStack>, keyword: String) {
+        this.sourceStacks = sourceStacks
+        EmiSearch.search(keyword)
     }
 
-    fun onStackInteraction(ingredient: EmiIngredient) {
+    internal fun buildStacks(searchedStacks: List<EmiStack>) {
+        this.searchedStacks = searchedStacks
+        buildGroupedStacks()
+        buildDisplayedStacks()
+    }
+
+    private fun buildGroupedStacks() {
+        // If we're using the index stacks, use the grouped index stacks so we don't have to group them every time
+        groupedStacks = if (searchedStacks == indexStacks) groupedIndexStacks.map {
+            // TODO: fix this
+            if (it is EmiGroupStack) it.isExpanded = false
+            it
+        }.ifEmpty {
+            // Build the grouped index stacks if they haven't been built
+            groupedIndexStacks = StackGroupManager.buildGroupedStacks(searchedStacks)
+            groupedIndexStacks
+        } else StackGroupManager.buildGroupedStacks(searchedStacks)
+    }
+
+    private fun buildDisplayedStacks() {
+        displayedStacks = groupedStacks.toMutableList()
+    }
+
+    @Deprecated("")
+    fun onStackInteractionDeprecated(ingredient: EmiIngredient) {
+        Layout.isTextureDirty = true
         EmiPlusPlus.LOGGER.info("onStackInteraction: $ingredient")
         when (ingredient) {
             is EmiGroupStack -> {
-                val stacks = EmiSearch.stacks.toMutableList()
+                val stacks = displayedStacks
                 if (ingredient.isExpanded) {
                     for (i in 0 until ingredient.items.size) {
                         stacks.removeAt(stacks.indexOf(ingredient) + 1)
@@ -42,7 +108,8 @@ object StackManager {
                 } else {
                     stacks.addAll(stacks.indexOf(ingredient) + 1, ingredient.items)
                 }
-                EmiSearch.stacks = stacks
+                // TODO: fix this
+                displayedStacks = stacks.toMutableList()
                 EmiScreenManager.recalculate()
                 ingredient.isExpanded = !ingredient.isExpanded
             }

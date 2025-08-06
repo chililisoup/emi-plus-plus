@@ -11,7 +11,7 @@ authors = "ConcerroX"
 description = '''
 This is an example description! Tell everyone what your mod is about!
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[mixins]]
 config = "emixx-common.mixins.json"

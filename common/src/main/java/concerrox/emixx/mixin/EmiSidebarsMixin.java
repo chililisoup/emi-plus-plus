@@ -15,10 +15,10 @@ import java.util.List;
 @Mixin(value = EmiSidebars.class, remap = false)
 public class EmiSidebarsMixin {
 
-    @Inject(at = @At("RETURN"), method = "getStacks", cancellable = true)
-    private static void getStacks(SidebarType type, CallbackInfoReturnable<List<? extends EmiIngredient>> cir) {
-        if (cir.getReturnValue() == EmiStackList.filteredStacks)
-            cir.setReturnValue(StackManager.INSTANCE.getSourceStacks());
-    }
+//    @Inject(at = @At("RETURN"), method = "getStacks", cancellable = true)
+//    private static void getStacks(SidebarType type, CallbackInfoReturnable<List<? extends EmiIngredient>> cir) {
+//        if (cir.getReturnValue() == EmiStackList.filteredStacks)
+//            cir.setReturnValue(StackManager.INSTANCE.getSourceStacksDeprecated());
+//    }
 
 }
