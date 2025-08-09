@@ -16,7 +16,7 @@ object StackManager {
     /**
      * Just the unprocessed index stacks from EMI.
      */
-    internal var indexStacks = listOf<EmiStack>()
+    internal var indexStacks = EmiStackList.filteredStacks
 
     /**
      * The original stacks to be searched, could be from the index, a creative mode tab, or a custom collection tab.
@@ -55,6 +55,7 @@ object StackManager {
 
     internal fun reload() {
         indexStacks = EmiStackList.filteredStacks
+        groupedIndexStacks = listOf()
         updateSourceStacks(indexStacks)
     }
 

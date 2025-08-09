@@ -13,10 +13,12 @@ import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
+import net.minecraft.resources.ResourceLocation
 
 class StackGroupConfigScreen : Screen(text("gui", "stack_group_config")) {
 
-    private val disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get().toMutableSet()
+    private val disabledStackGroups =
+        EmiPlusPlusConfig.disabledStackGroups.get().map { ResourceLocation.parse(it) }.toMutableSet()
 
     private val layout = HeaderAndFooterLayout(this)
     private val list = StackGroupGridList(this, disabledStackGroups)
@@ -29,17 +31,13 @@ class StackGroupConfigScreen : Screen(text("gui", "stack_group_config")) {
         layout.addTitleHeader(title, font)
         layout.addToContents(list)
         layout.addToFooter(Button.builder(CommonComponents.GUI_DONE) {
-            EmiPlusPlusConfig.disabledStackGroups.set(disabledStackGroups.toList())
+            EmiPlusPlusConfig.disabledStackGroups.set(disabledStackGroups.map { it.toString() }.toList())
             EmiPlusPlusConfig.save()
             StackGroupManager.reload()
             onClose()
         }.width(200).build())
         layout.visitWidgets(::addRenderableWidget)
-
-//        addRenderableWidget(tabNavigationBar)
-//        tabNavigationBar.selectTab(0, false)
         repositionElements()
-
         list.add()
     }
 

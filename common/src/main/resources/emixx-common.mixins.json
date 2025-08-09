@@ -9,13 +9,16 @@
     "CreativeModeInventoryScreenMixin",
     "EmiReloadManagerReloadWorkerMixin",
     "EmiScreenManagerMixin",
-    "EmiSearchSearchWorkerMixin",
     "EmiScreenManagerScreenSpaceMixin",
     "EmiScreenManagerSidebarPanelMixin",
+    "EmiSearchSearchWorkerMixin",
     "NameQueryMixin",
     "RecipeCostTooltipComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "EmiIngredientRecipeMixin"
+  ]
 }

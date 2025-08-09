@@ -6,13 +6,13 @@ import concerrox.emixx.config.EmiPlusPlusConfig
 import concerrox.emixx.content.stackgroup.data.*
 import concerrox.emixx.registry.ModTags
 import dev.emi.emi.api.stack.EmiStack
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.ItemTags
+import net.minecraft.tags.TagKey
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
-import kotlin.io.path.createDirectories
-import kotlin.io.path.div
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.readText
+import kotlin.io.path.*
 
 object StackGroupManager {
 
@@ -104,13 +104,12 @@ object StackGroupManager {
 
     private val stackGroups = mutableListOf<StackGroup>()
     internal var groupToGroupStacks = mapOf<StackGroup, EmiGroupStack>()
-    private var disabledStackGroups = listOf<String>()
+    private var disabledStackGroups = listOf<ResourceLocation>()
 
     fun reload() {
-        disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get()
+        disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get().map { ResourceLocation.parse(it) }
         stackGroups.clear()
         stackGroups.addAll(DEFAULT_STACK_GROUPS)
-        groupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
 //        stackGroups.addAll(DEFAULT_STACK_GROUPS.filter { disabledStackGroups.contains(it.id) })
         STACK_GROUP_DIRECTORY_PATH.createDirectories().listDirectoryEntries("*.json").forEach {
             val json = JsonParser.parseString(it.readText())
@@ -139,6 +138,28 @@ object StackGroupManager {
             if (shouldAddStack) result += stack
         }
         return result
+    }
+
+    @Deprecated("Will be removed after the refactor of stack groups")
+    internal fun buildGroupedStacksForConfig(source: List<EmiStack>): Map<StackGroup, EmiGroupStack> {
+        val localGroupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
+        for (stack in source) {
+            for (stackGroup in stackGroups) {
+                val groupStack = localGroupToGroupStacks[stackGroup]!!
+                if (stackGroup.match(stack)) groupStack.items += GroupedEmiStack(stack, stackGroup)
+            }
+        }
+        return localGroupToGroupStacks
+    }
+
+    @Deprecated("Will be removed after the refactor of stack groups")
+    internal fun create(tag: TagKey<Item>) {
+        SimpleItemGroup.CODEC.encodeStart(
+            JsonOps.INSTANCE, SimpleItemGroup(tag.location, StackGroup.Type.ITEM, listOf(Ingredient.of(tag)))
+        )
+            .ifSuccess { ret ->
+                (STACK_GROUP_DIRECTORY_PATH / (tag.location.path.replace("/", "__") + ".json")).writeText(ret.toString())
+            }
     }
 
 }

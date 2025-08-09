@@ -59,8 +59,12 @@ class ImageButton : SizedButtonWidget {
         text: Supplier<List<Component>>
     ) : super(x, y, width, height, u, v, isActive, action, vOffset, text)
 
+    companion object {
+        internal val TEXTURE = res("textures/gui/buttons.png")
+    }
+
     init {
-        texture = res("textures/gui/buttons.png")
+        texture = TEXTURE
     }
 
     override fun renderWidget(raw: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {

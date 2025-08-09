@@ -2,6 +2,7 @@ package concerrox.emixx.content.stackgroup.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
 import concerrox.emixx.content.ScreenManager.ENTRY_SIZE
+import concerrox.emixx.content.StackManager
 import concerrox.emixx.content.stackgroup.EmiGroupStack
 import concerrox.emixx.content.stackgroup.StackGroupManager
 import concerrox.emixx.gui.components.Switch
@@ -15,7 +16,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
 class StackGroupGridList(
-    private val screen: StackGroupConfigScreen, private val disabledStackGroups: MutableSet<String>
+    private val screen: StackGroupConfigScreen, private val disabledStackGroups: MutableSet<ResourceLocation>
 ) : ContainerObjectSelectionList<StackGroupGridList.TripleEntry>(
     Minecraft.getInstance(), screen.width, screen.height, 0, TripleEntry.HEIGHT
 ) {
@@ -29,7 +30,7 @@ class StackGroupGridList(
     //override fun getListOutlinePadding() = TripleEntry.GUTTER
 
     fun add() {
-        StackGroupManager.groupToGroupStacks.values.chunked(3).forEach { triple ->
+        StackGroupManager.buildGroupedStacksForConfig(StackManager.indexStacks).values.chunked(3).forEach { triple ->
             addEntry(TripleEntry(this, triple))
         }
     }
@@ -53,12 +54,14 @@ class StackGroupGridList(
         }
 
         private val switch = Switch.Builder(Component.empty())
-            .setChecked(!triple.listWidget.disabledStackGroups.contains(stack!!.group.id)).apply {
+            .setChecked(stack != null && !triple.listWidget.disabledStackGroups.contains(stack.group.id)).apply {
                 onCheckedChangeListener = Switch.OnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        triple.listWidget.disabledStackGroups.remove(stack!!.group.id)
-                    } else {
-                        triple.listWidget.disabledStackGroups.add(stack!!.group.id)
+                    if (stack != null) {
+                        if (isChecked) {
+                            triple.listWidget.disabledStackGroups.remove(stack.group.id)
+                        } else {
+                            triple.listWidget.disabledStackGroups.add(stack.group.id)
+                        }
                     }
                 }
             }.build()
@@ -70,7 +73,13 @@ class StackGroupGridList(
             val startX = x + BORDER_WIDTH + PADDING
             val startY = y + BORDER_WIDTH + PADDING
             stack?.let {
-                guiGraphics.drawString(Minecraft.getInstance().font, stack.group.id, startX, startY + 2, 0xFFFFFF)
+                guiGraphics.drawString(
+                    Minecraft.getInstance().font,
+                    stack.group.id.toString(),
+                    startX,
+                    startY + 2,
+                    0xFFFFFF
+                )
                 var itemX = startX
                 val itemY = startY + ENTRY_SIZE
                 stack.items.take(8).forEach {
@@ -78,11 +87,10 @@ class StackGroupGridList(
                     itemX += ENTRY_SIZE
                 }
             }
-            switch.setPosition(x + WIDTH - switch.width - BORDER_WIDTH - PADDING, startY)
-            children.forEach {
-                it.render(guiGraphics, mouseX, mouseY, partialTick)
+            if (stack != null) {
+                switch.setPosition(x + WIDTH - switch.width - BORDER_WIDTH - PADDING, startY)
+                switch.render(guiGraphics, mouseX, mouseY, partialTick)
             }
-
         }
 
         override fun setFocused(isFocused: Boolean) {
@@ -112,7 +120,7 @@ class StackGroupGridList(
 
     }
 
-    class TripleEntry(val listWidget: StackGroupGridList, stack: List<EmiGroupStack>) : Entry<TripleEntry>() {
+    class TripleEntry(val listWidget: StackGroupGridList, stack: List<EmiGroupStack?>) : Entry<TripleEntry>() {
 
         companion object {
             const val GUTTER = 6
@@ -120,9 +128,14 @@ class StackGroupGridList(
             const val HEIGHT = StackGroupEntry.HEIGHT + GUTTER * 2
         }
 
-        private val children = mutableListOf(
-            StackGroupEntry(this, stack[0]), StackGroupEntry(this, stack[1]), StackGroupEntry(this, stack[2])
-        )
+        private val children = mutableListOf<StackGroupEntry>().apply {
+            for (i in 0..2) {
+                val stack = stack.getOrNull(i)?.let {
+                    add(StackGroupEntry(this@TripleEntry, it))
+                }
+
+            }
+        }
 
         override fun render(
             guiGraphics: GuiGraphics,
@@ -147,7 +160,5 @@ class StackGroupGridList(
 
         override fun children() = children
         override fun narratables() = children
-
     }
-
 }

@@ -2,10 +2,11 @@ package concerrox.emixx.content.stackgroup.data
 
 import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.level.block.InfestedBlock
 
-internal class InfestedBlockItemGroup : StackGroup("infested_blocks", Type.ITEM) {
+internal class InfestedBlockItemGroup : StackGroup(ResourceLocation.withDefaultNamespace("infested_blocks"), Type.ITEM) {
 
     override fun match(stack: EmiIngredient): Boolean {
         if (stack !is EmiStack) return false

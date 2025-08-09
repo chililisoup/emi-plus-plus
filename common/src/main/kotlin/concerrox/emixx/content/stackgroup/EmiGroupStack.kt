@@ -1,10 +1,9 @@
 package concerrox.emixx.content.stackgroup
 
-import concerrox.emixx.content.stackgroup.data.StackGroup
 import concerrox.emixx.content.ScreenManager.ENTRY_SIZE
-import concerrox.emixx.util.GuiGraphicsUtils
-import concerrox.emixx.res
+import concerrox.emixx.content.stackgroup.data.StackGroup
 import concerrox.emixx.text
+import concerrox.emixx.util.GuiGraphicsUtils
 import concerrox.emixx.util.push
 import dev.emi.emi.EmiPort
 import dev.emi.emi.EmiRenderHelper
@@ -27,7 +26,10 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
 
     override fun isEmpty() = true
     override fun getKey() = group
-    override fun getId() = res(group.id)
+
+    @Deprecated("")
+    override fun getId() = group.id
+
     override fun equals(other: Any?) = this === other
     override fun toString() = key.toString()
     override fun getTooltip() = tooltipText.map { ClientTooltipComponent.create(it.visualOrderText) }
@@ -66,7 +68,7 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
     }
 
     private fun buildStackDefaultName(): String {
-        return group.id.split("_").joinToString(" ") { it.replaceFirstChar { c -> c.titlecase(Locale.getDefault()) } }
+        return group.id.path.split("_").joinToString(" ") { it.replaceFirstChar { c -> c.titlecase(Locale.getDefault()) } }
     }
 
     override fun hashCode(): Int {

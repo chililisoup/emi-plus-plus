@@ -2,10 +2,11 @@ package concerrox.emixx.content.stackgroup.data
 
 import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.level.block.PressurePlateBlock
 
-internal class PressurePlateItemGroup : StackGroup("pressure_plates", Type.ITEM) {
+internal class PressurePlateItemGroup : StackGroup(ResourceLocation.withDefaultNamespace("pressure_plates"), Type.ITEM) {
 
     override fun match(stack: EmiIngredient): Boolean {
         if (stack !is EmiStack) return false

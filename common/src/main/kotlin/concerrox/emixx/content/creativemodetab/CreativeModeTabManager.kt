@@ -36,7 +36,9 @@ object CreativeModeTabManager {
     internal fun initialize() {
         lastTabPage = creativeModeTabs.size.toUInt() / CreativeModeTabGui.tabCount
         currentTabPage = 0u
-        updateTabs()
+        val page = updateTabs()
+
+        if (page.isEmpty()) return // TODO: fix this
 
         // TODO: fix the sound
         // Select the index tab by default

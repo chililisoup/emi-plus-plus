@@ -2,9 +2,10 @@ package concerrox.emixx.content.stackgroup.data
 
 import dev.emi.emi.api.stack.EmiIngredient
 import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.StringRepresentable
 
-abstract class StackGroup(val id: String, val type: Type) {
+abstract class StackGroup(val id: ResourceLocation, val type: Type) {
 
     abstract fun match(stack: EmiIngredient): Boolean
 
