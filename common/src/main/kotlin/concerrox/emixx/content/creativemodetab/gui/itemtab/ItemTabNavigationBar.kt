@@ -6,6 +6,8 @@ import concerrox.emixx.content.ScreenManager.ENTRY_SIZE
 import concerrox.emixx.res
 import dev.emi.emi.runtime.EmiDrawContext
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.TabButton
+import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.components.tabs.TabNavigationBar
 import net.minecraft.client.gui.layouts.LinearLayout
 
@@ -52,6 +54,23 @@ class ItemTabNavigationBar(private val tabManager: ItemTabManager) : TabNavigati
         layout.arrangeElements()
         layout.x = x + 2
         layout.y = y
+    }
+
+    override fun setFocused(focusedChildren: GuiEventListener?) {
+        if (super.getFocused() != null) {
+            super.getFocused()!!.isFocused = false
+        }
+
+        if (focusedChildren != null) {
+            focusedChildren.isFocused = true
+        }
+
+        // TODO: fix the recursion
+//        focused = focusedChildren
+
+        if (focusedChildren is TabButton) {
+            tabManager.setCurrentTab(focusedChildren.tab(), false)
+        }
     }
 
 }

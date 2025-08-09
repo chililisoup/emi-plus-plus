@@ -13,6 +13,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.screen.EmiScreenManager;
+import dev.emi.emi.search.EmiSearch;
 import kotlin.NotImplementedError;
 import net.minecraft.client.gui.screens.Screen;
 import org.objectweb.asm.Opcodes;
@@ -42,7 +43,8 @@ public abstract class EmiScreenManagerMixin {
      * Add extra space for the EMI++ header
      */
     @ModifyVariable(at = @At(value = "STORE", ordinal = 0), method = "createScreenSpace", name = "headerOffset")
-    private static int modifyHeaderOffset(int original, EmiScreenManager.SidebarPanel panel, Screen screen, List<Bounds> exclusion) {
+    private static int modifyHeaderOffset(int original, EmiScreenManager.SidebarPanel panel, Screen screen,
+                                          List<Bounds> exclusion) {
         if (panel.getType() == SidebarType.INDEX && EmiPlusPlusConfig.enableCreativeModeTabs.get()) {
             return original + CreativeModeTabGui.CREATIVE_MODE_TAB_HEIGHT;
         } else {
@@ -52,27 +54,31 @@ public abstract class EmiScreenManagerMixin {
 
     /**
      * Redirect the stacks to EMI++'s stack manager:
-     * {@snippet : searchedStacks = EmiSearch.stacks; } will be replaced by
-     * {@snippet : searchedStacks = StackManager.displayedStacks; }
      */
     @Redirect(method = "recalculate",
             at = @At(value = "FIELD", target = "Ldev/emi/emi/screen/EmiScreenManager;searchedStacks:Ljava/util/List;",
                     opcode = Opcodes.PUTSTATIC))
     private static void redirectStacksSourceToEmixx(List<? extends EmiIngredient> value) {
-        searchedStacks = StackManager.INSTANCE.getDisplayedStacks$emixx_common();
+        if (getSearchPanel().getType() == SidebarType.INDEX) {
+            searchedStacks = StackManager.INSTANCE.getDisplayedStacks$emixx_common();
+        } else {
+            searchedStacks = EmiSearch.stacks;
+        }
     }
 
     /**
      * Redirect the stacks to EMI++'s stack manager:
-     * {@snippet : searchedStacks != EmiSearch.stacks } will be replaced by
-     * {@snippet : searchedStacks != StackManager.displayedStacks }
      */
     @ModifyExpressionValue(method = "recalculate",
             at = @At(value = "FIELD", target = "Ldev/emi/emi/search/EmiSearch;stacks:Ljava/util/List;",
                     opcode = Opcodes.GETSTATIC))
     private static List<? extends EmiIngredient> redirectCachedStacksToEmixx(List<? extends EmiIngredient> original) {
-        Layout.INSTANCE.setTextureDirty(true); // TODO: fix  this
-        return StackManager.INSTANCE.getDisplayedStacks$emixx_common();
+        if (getSearchPanel().getType() == SidebarType.INDEX) {
+            Layout.INSTANCE.setTextureDirty(true); // TODO: fix  this
+            return StackManager.INSTANCE.getDisplayedStacks$emixx_common();
+        } else {
+            return original;
+        }
     }
 
     /**
@@ -80,8 +86,7 @@ public abstract class EmiScreenManagerMixin {
      */
     @Inject(method = "getSearchSource", at = @At(value = "RETURN"), cancellable = true)
     private static void redirectSearchSourceToEmixx(CallbackInfoReturnable<List<? extends EmiIngredient>> cir) {
-        var panel = getSearchPanel();
-        if (panel != null && panel.getType() == SidebarType.INDEX)
+        if (getSearchPanel().getType() == SidebarType.INDEX)
             cir.setReturnValue(StackManager.INSTANCE.getSourceStacks$emixx_common());
     }
 
@@ -91,7 +96,8 @@ public abstract class EmiScreenManagerMixin {
     }
 
     @Inject(at = @At("RETURN"), method = "mouseScrolled", cancellable = true)
-    private static void mouseScrolled(double mouseX, double mouseY, double amount, CallbackInfoReturnable<Boolean> cir) {
+    private static void mouseScrolled(double mouseX, double mouseY, double amount,
+                                      CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() || ScreenManager.INSTANCE.onMouseScrolled(mouseX, mouseY, amount));
     }
 

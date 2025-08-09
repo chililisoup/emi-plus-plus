@@ -16,7 +16,6 @@ public class RecipeCostTooltipComponentMixin {
     private void removeAmountRange(EmiDrawContext instance, EmiIngredient stack, int x, int y, Operation<Void> original) {
         if (stack instanceof AmountRangeItemEmiStack) {
             instance.drawStack(stack, x, y, ~EmiIngredient.RENDER_AMOUNT);
-//            amountRangeItemEmiStack.renderWithoutRange$emixx_common(instance.raw(), x, y, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
         } else {
             original.call(instance, stack, x, y);
         }

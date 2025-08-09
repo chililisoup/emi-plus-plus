@@ -53,3 +53,8 @@ accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForIte
 accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForItemsAndEmeralds emeraldCost I
 accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForItemsAndEmeralds fromItem Lnet/minecraft/world/item/Item;
 accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForItemsAndEmeralds fromCount I
+
+# NeoForge
+accessible field net/neoforged/neoforge/common/BasicItemListing price Lnet/minecraft/world/item/ItemStack;
+accessible field net/neoforged/neoforge/common/BasicItemListing price2 Lnet/minecraft/world/item/ItemStack;
+accessible field net/neoforged/neoforge/common/BasicItemListing forSale Lnet/minecraft/world/item/ItemStack;

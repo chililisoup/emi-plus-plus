@@ -22,6 +22,7 @@ configurations {
 
 repositories {
     maven("https://thedarkcolour.github.io/KotlinForForge/")
+    maven("https://modmaven.dev/")
 }
 
 val neoForgeVersion: String by project
@@ -34,6 +35,8 @@ dependencies {
     }
     modImplementation("dev.emi:emi-neoforge:$emiVersion")
     modImplementation(fileTree("libs"))
+
+    modImplementation("mekanism:Mekanism:1.21.1-10.7.0.55")
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionNeoForge")) { isTransitive = false }

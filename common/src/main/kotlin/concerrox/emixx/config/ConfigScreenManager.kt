@@ -14,6 +14,7 @@ import dev.emi.emi.screen.widget.config.*
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.neoforged.neoforge.common.ModConfigSpec
 import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue
 import java.util.function.Supplier
@@ -105,7 +106,9 @@ object ConfigScreenManager {
         onClickedListener: Button.OnPress
     ) : ConfigEntryWidget(name, tooltip, search, 20) {
 
-        private val button = EmiPort.newButton(0, 0, 150, 20, text("${name.string}.manage"), onClickedListener)
+        private val button = EmiPort.newButton(
+            0, 0, 150, 20, text("${(name.contents as TranslatableContents).key}.manage"), onClickedListener
+        )
 
         init {
             setChildren(listOf(button))

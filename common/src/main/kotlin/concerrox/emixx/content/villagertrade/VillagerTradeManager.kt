@@ -33,10 +33,21 @@ object VillagerTradeManager {
     internal val VILLAGER_TRADES: EmiRecipeCategory =
         EmiRecipeCategory(res("villager_trades"), EmiStack.of(Items.EMERALD))
 
+    private val CUSTOM_VILLAGER_TRADE_TYPES =
+        mutableMapOf<String, (VillagerTrades.ItemListing) -> Pair<MutableList<out EmiIngredient>, MutableList<EmiStack>>>()
+
     fun initialize(emiRegistry: EmiRegistry) {
         emiRegistry.addCategory(VILLAGER_TRADES)
         emiRegistry.addWorkstation(VILLAGER_TRADES, EmiStack.of(Items.VILLAGER_SPAWN_EGG))
         collectVillagerTrades(emiRegistry)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : VillagerTrades.ItemListing> addCustomVillagerTradeType(
+        clazz: Class<T>, handler: (T) -> Pair<MutableList<out EmiIngredient>, MutableList<EmiStack>>
+    ) {
+        CUSTOM_VILLAGER_TRADE_TYPES[clazz.name] =
+            handler as (VillagerTrades.ItemListing) -> Pair<MutableList<out EmiIngredient>, MutableList<EmiStack>>
     }
 
     private fun collectVillagerTrades(emiRegistry: EmiRegistry) {
@@ -176,7 +187,13 @@ object VillagerTradeManager {
                 output = stackOf(ItemStack(itemListing.toItem.item, itemListing.toCount))
             }
 
-            else -> throw IllegalStateException("Unsupported villager trade type: $itemListing")
+            else -> {
+                val result = CUSTOM_VILLAGER_TRADE_TYPES.getOrElse(itemListing.javaClass.name) {
+                    throw IllegalStateException("Unsupported villager trade type: $itemListing")
+                }.invoke(itemListing)
+                inputs = result.first
+                output = result.second
+            }
         }
         emiRegistry.addRecipe(VillagerTradeRecipe(profession, villagerLevel, inputs, output))
     }

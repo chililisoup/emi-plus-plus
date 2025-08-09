@@ -9,6 +9,8 @@ import concerrox.emixx.gui.components.ImageButton
 import concerrox.emixx.util.pos
 import dev.emi.emi.config.EmiConfig
 import dev.emi.emi.config.HeaderType
+import dev.emi.emi.registry.EmiExclusionAreas
+import dev.emi.emi.screen.EmiScreenBase
 import net.minecraft.client.gui.screens.Screen
 
 object CreativeModeTabGui {
@@ -25,11 +27,11 @@ object CreativeModeTabGui {
     private val tabManager = ItemTabManager({ screen.addRenderableWidget(it) }, { screen.removeWidget(it) }).apply {
         onTabSelectedListener = CreativeModeTabManager::onTabSelected
     }
-    internal val tabNavigationBar = ItemTabNavigationBar(tabManager)
+    internal val tabNavigationBar = ItemTabNavigationBar(tabManager).pos(0, 0)
     internal var tabCount = 0u
 
-    private val buttonPrevious = ImageButton(16, 16, u = 0, v = 0, { true }, CreativeModeTabManager::previousPage)
-    private val buttonNext = ImageButton(16, 16, u = 16, v = 0, { true }, CreativeModeTabManager::nextPage)
+    private val buttonPrevious = ImageButton(16, 16, u = 0, v = 0, { true }, CreativeModeTabManager::previousPage).pos(0, 0)
+    private val buttonNext = ImageButton(16, 16, u = 16, v = 0, { true }, CreativeModeTabManager::nextPage).pos(0, 0)
 
     private var scrollAccumulator = 0.0
 
@@ -41,10 +43,11 @@ object CreativeModeTabGui {
         tabCount = (tileW.toUInt() - 2u).coerceIn(1u, UByte.MAX_VALUE.toUInt())
 
         buttonPrevious.pos(startX, startY + 2)
-        buttonNext.pos(tabNavigationBar.x + tabNavigationBar.width, startY + 2)
         tabNavigationBar.pos(startX + buttonPrevious.width, startY).apply {
             width = tabCount.toInt() * ENTRY_SIZE + 4
         }
+        // Position the buttonNext after the tabNavigationBar since it uses the tab's width
+        buttonNext.pos(tabNavigationBar.x + tabNavigationBar.width, startY + 2)
     }
 
     internal fun initialize(screen: Screen) {
@@ -58,16 +61,7 @@ object CreativeModeTabGui {
     internal fun contains(mouseX: Double, mouseY: Double): Boolean {
         val xRange = tabNavigationBar.x..(tabNavigationBar.x + tabNavigationBar.width)
         val yRange = tabNavigationBar.y..(tabNavigationBar.y + tabNavigationBar.height)
-//        val yRange =
-//            (indexScreenSpace.ty - EMI_HEADER_HEIGHT - CREATIVE_MODE_TAB_HEIGHT).toDouble()..(indexScreenSpace.ty - EMI_HEADER_HEIGHT).toDouble()
         return xRange.contains(mouseX.toInt()) && yRange.contains(mouseY.toInt())
-//           val xRange = indexScreenSpace.tx..(indexScreenSpace.tx + indexScreenSpace.tw * ENTRY_SIZE)
-//            val yRange =
-//                (indexScreenSpace.ty - EMI_HEADER_HEIGHT - CREATIVE_MODE_TAB_HEIGHT).toDouble()..(indexScreenSpace.ty - EMI_HEADER_HEIGHT).toDouble()
-//            if (xRange.contains(mouseX) && yRange.contains(mouseY)) {
-//                if (sa > 0) previousPage() else if (sa < 0) nextPage()
-//                return true
-//            }
     }
 
     internal fun onMouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {

@@ -14,6 +14,9 @@ This is an example description! Tell everyone what your mod is about!
 logoFile = "icon.png"
 
 [[mixins]]
+config = "emixx.mixins.json"
+
+[[mixins]]
 config = "emixx-common.mixins.json"
 
 [[dependencies.emixx]]

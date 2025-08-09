@@ -81,7 +81,7 @@ object StackManager {
         // If we're using the index stacks, use the grouped index stacks so we don't have to group them every time
         groupedStacks = if (searchedStacks == indexStacks) groupedIndexStacks.map {
             // TODO: fix this
-            if (it is EmiGroupStack) it.isExpanded = false
+//            if (it is EmiGroupStack) it.isExpanded = false
             it
         }.ifEmpty {
             // Build the grouped index stacks if they haven't been built
@@ -92,6 +92,16 @@ object StackManager {
 
     private fun buildDisplayedStacks() {
         displayedStacks = groupedStacks.toMutableList()
+        var i = 0
+        while (i < displayedStacks.size) {
+            val stack = displayedStacks[i]
+            if (stack is EmiGroupStack) {
+                if (stack.isExpanded) {
+                    displayedStacks.addAll(i + 1, stack.items)
+                }
+            }
+            i++
+        }
     }
 
     @Deprecated("")

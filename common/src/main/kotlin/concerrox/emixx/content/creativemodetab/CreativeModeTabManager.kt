@@ -22,6 +22,7 @@ object CreativeModeTabManager {
 
     private var currentTabPage = 0u
     private var lastTabPage = 0u
+    private var currentTab = 0u
 
     private var isSelectingVanillaCreativeInventoryTabByEmiPlusPlus = false
     private var isSelectingEmiPlusPlusCreativeModeTabByVanilla = false
@@ -37,6 +38,7 @@ object CreativeModeTabManager {
         currentTabPage = 0u
         updateTabs()
 
+        // TODO: fix the sound
         // Select the index tab by default
         CreativeModeTabGui.selectTab(0, false)
         onTabSelected(CreativeModeTabGui.tabNavigationBar.tabs[0] as ItemTab)
@@ -55,6 +57,8 @@ object CreativeModeTabManager {
     }
 
     internal fun onTabSelected(tab: ItemTab) {
+        currentTab = CreativeModeTabGui.tabNavigationBar.tabs.indexOf(tab).toUInt()
+
         val screen = Minecraft.screen
         // Pass if it's selected by clicking the tab bar from vanilla
         if (!isSelectingEmiPlusPlusCreativeModeTabByVanilla && EmiPlusPlusConfig.syncSelectedCreativeModeTab.get() && tab.creativeModeTab != null && screen is CreativeModeInventoryScreen) {

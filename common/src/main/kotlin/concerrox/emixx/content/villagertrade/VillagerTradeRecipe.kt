@@ -1,13 +1,17 @@
 package concerrox.emixx.content.villagertrade
 
+import concerrox.emixx.Minecraft
 import dev.emi.emi.api.recipe.EmiRecipe
 import dev.emi.emi.api.render.EmiTexture
 import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.api.widget.WidgetHolder
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.npc.Villager
 import net.minecraft.world.entity.npc.VillagerProfession
+
 
 class VillagerTradeRecipe(
     profession: VillagerProfession,
@@ -34,6 +38,14 @@ class VillagerTradeRecipe(
         widgets.addSlot(inputs[0], 0, 10)
         widgets.addSlot(inputs[1], 49, 10)
         widgets.addSlot(output[0], 107, 10).recipeContext(this)
+
+//        val v = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace("villager")).create(
+//            Minecraft.level
+//        )!! as Villager
+//        v.villagerData = v.villagerData.setProfession(VillagerProfession.FARMER).setLevel(1)
+//        widgets.addSlot(
+//            EntityEmiStack(v), 50, 0
+//        )
     }
 
 }

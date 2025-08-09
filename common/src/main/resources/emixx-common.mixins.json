@@ -10,16 +10,12 @@
     "EmiReloadManagerReloadWorkerMixin",
     "EmiScreenManagerMixin",
     "EmiSearchSearchWorkerMixin",
-    "EmiSidebarsMixin",
-    "ScreenSpaceMixin",
-    "SidebarPanelMixin"
+    "EmiScreenManagerScreenSpaceMixin",
+    "EmiScreenManagerSidebarPanelMixin",
+    "NameQueryMixin",
+    "RecipeCostTooltipComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "EmiApiMixin",
-    "EmiScreenManagerSidebarPanelMixin",
-    "RecipeCostTooltipComponentMixin"
-  ]
+  }
 }

@@ -5,9 +5,7 @@ import com.mojang.serialization.JsonOps
 import concerrox.emixx.config.EmiPlusPlusConfig
 import concerrox.emixx.content.stackgroup.data.*
 import concerrox.emixx.registry.ModTags
-import dev.emi.emi.api.stack.EmiIngredient
 import dev.emi.emi.api.stack.EmiStack
-import dev.emi.emi.registry.EmiStackList
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -88,14 +86,24 @@ object StackGroupManager {
         ),
         SimpleItemGroup("trim_templates", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.TRIM_TEMPLATES))),
         SimpleItemGroup("buckets", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.BUCKETS))),
+        SimpleItemGroup("dusts", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.DUSTS))),
+        SimpleItemGroup("nuggets", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.NUGGETS))),
+        SimpleItemGroup("ingots", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.INGOTS))),
         BannerPatternItemGroup(),
         SpawnEggItemGroup(),
         CopperBlockItemGroup(),
+
+        // Mekanism
+        SimpleItemGroup("units", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_UNITS))),
+        SimpleItemGroup("dirty_dusts", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_DIRTY_DUSTS))),
+        SimpleItemGroup("clumps", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_CLUMPS))),
+        SimpleItemGroup("crystals", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_CRYSTALS))),
+        SimpleItemGroup("enriched", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_ENRICHED))),
+        SimpleItemGroup("shards", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_SHARDS))),
     )
 
     private val stackGroups = mutableListOf<StackGroup>()
     internal var groupToGroupStacks = mapOf<StackGroup, EmiGroupStack>()
-    private var groupedStacks = listOf<EmiIngredient>()
     private var disabledStackGroups = listOf<String>()
 
     fun reload() {
@@ -107,7 +115,6 @@ object StackGroupManager {
         STACK_GROUP_DIRECTORY_PATH.createDirectories().listDirectoryEntries("*.json").forEach {
             val json = JsonParser.parseString(it.readText())
             SimpleItemGroup.CODEC.parse(JsonOps.INSTANCE, json).ifSuccess { group -> stackGroups += group }
-            groupedStacks = buildGroupedStacks(EmiStackList.filteredStacks)
         }
     }
 

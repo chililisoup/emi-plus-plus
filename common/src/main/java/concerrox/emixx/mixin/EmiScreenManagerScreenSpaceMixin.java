@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 import static concerrox.emixx.content.ScreenManager.ENTRY_SIZE;
 
 @Mixin(value = EmiScreenManager.ScreenSpace.class, remap = false)
-public abstract class ScreenSpaceMixin {
+public abstract class EmiScreenManagerScreenSpaceMixin {
 
     @Shadow
     @Final
