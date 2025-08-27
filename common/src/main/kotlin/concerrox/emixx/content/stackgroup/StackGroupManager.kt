@@ -18,88 +18,84 @@ object StackGroupManager {
 
     private val STACK_GROUP_DIRECTORY_PATH = EmiPlusPlusConfig.CONFIG_DIRECTORY_PATH / "groups"
     private val DEFAULT_STACK_GROUPS = arrayOf(
-        SimpleItemGroup("enchanted_books", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.ENCHANTED_BOOK))),
+        SimpleItemGroup("enchanted_books", listOf(Ingredient.of(Items.ENCHANTED_BOOK))),
         SimpleItemGroup(
-            "potions", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.POTION), Ingredient.of(Items.OMINOUS_BOTTLE))
+            "potions", listOf(Ingredient.of(Items.POTION), Ingredient.of(Items.OMINOUS_BOTTLE))
         ),
-        SimpleItemGroup("splash_potions", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.SPLASH_POTION))),
-        SimpleItemGroup("lingering_potions", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.LINGERING_POTION))),
-        SimpleItemGroup("tipped_arrows", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.TIPPED_ARROW))),
-        SimpleItemGroup("music_discs", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MUSIC_DISCS))),
+        SimpleItemGroup("splash_potions", listOf(Ingredient.of(Items.SPLASH_POTION))),
+        SimpleItemGroup("lingering_potions", listOf(Ingredient.of(Items.LINGERING_POTION))),
+        SimpleItemGroup("tipped_arrows", listOf(Ingredient.of(Items.TIPPED_ARROW))),
+        EmiStackGroup.of(ModTags.Item.MUSIC_DISCS),
 
-        SimpleItemGroup("shovels", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.SHOVELS))),
-        SimpleItemGroup("pickaxes", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.PICKAXES))),
-        SimpleItemGroup("axes", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.AXES))),
-        SimpleItemGroup("swords", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.SWORDS))),
-        SimpleItemGroup("hoes", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.HOES))),
-        SimpleItemGroup("head_armors", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.HEAD_ARMOR))),
-        SimpleItemGroup("chest_armors", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.CHEST_ARMOR))),
-        SimpleItemGroup("leg_armors", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.LEG_ARMOR))),
-        SimpleItemGroup("foot_armors", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.FOOT_ARMOR))),
+        EmiStackGroup.of(ItemTags.SHOVELS),
+        EmiStackGroup.of(ItemTags.PICKAXES),
+        EmiStackGroup.of(ItemTags.AXES),
+        EmiStackGroup.of(ItemTags.SWORDS),
+        EmiStackGroup.of(ItemTags.HOES),
+        EmiStackGroup.of(ItemTags.HEAD_ARMOR),
+        EmiStackGroup.of(ItemTags.CHEST_ARMOR),
+        EmiStackGroup.of(ItemTags.LEG_ARMOR),
+        EmiStackGroup.of(ItemTags.FOOT_ARMOR),
         AnimalArmorItemGroup(),
 
         InfestedBlockItemGroup(),
-        SimpleItemGroup("raw_materials", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.RAW_MATERIALS))),
-        SimpleItemGroup("foods", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.FOODS))),
-        SimpleItemGroup("planks", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.PLANKS))),
-        SimpleItemGroup("stairs", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.STAIRS))),
-        SimpleItemGroup("slabs", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.SLABS))),
-        SimpleItemGroup("fences", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.FENCES))),
-        SimpleItemGroup("fence_gates", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.FENCE_GATES))),
-        SimpleItemGroup("doors", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.DOORS))),
-        SimpleItemGroup("trapdoors", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.TRAPDOORS))),
+        EmiStackGroup.of(ModTags.Item.RAW_MATERIALS),
+        EmiStackGroup.of(ModTags.Item.FOODS),
+        EmiStackGroup.of(ItemTags.PLANKS),
+        EmiStackGroup.of(ItemTags.STAIRS),
+        EmiStackGroup.of(ItemTags.SLABS),
+        EmiStackGroup.of(ItemTags.FENCES),
+        EmiStackGroup.of(ItemTags.FENCE_GATES),
+        EmiStackGroup.of(ItemTags.DOORS),
+        EmiStackGroup.of(ItemTags.TRAPDOORS),
         PressurePlateItemGroup(),
         MinecartItemGroup(),
-        SimpleItemGroup("skulls", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.SKULLS))),
-        SimpleItemGroup("rails", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.RAILS))),
-        SimpleItemGroup("dyes", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.DYES))),
-        SimpleItemGroup("buttons", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.BUTTONS))),
-        SimpleItemGroup("saplings", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.SAPLINGS))),
-        SimpleItemGroup("ores", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.ORES))),
-        SimpleItemGroup("seeds", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.SEEDS))),
-        SimpleItemGroup("logs", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.LOGS))),
-        SimpleItemGroup("leaves", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.LEAVES))),
-        SimpleItemGroup("signs", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.SIGNS))),
-        SimpleItemGroup("hanging_signs", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.HANGING_SIGNS))),
-        SimpleItemGroup("boats", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.BOATS))),
-        SimpleItemGroup("walls", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.WALLS))),
-        SimpleItemGroup("glass_blocks", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.GLASS_BLOCKS))),
-        SimpleItemGroup("glass_panes", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.GLASS_PANES))),
-        SimpleItemGroup("wools", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.WOOL))),
-        SimpleItemGroup("flowers", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.FLOWERS))),
-        SimpleItemGroup("terracottas", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.TERRACOTTA))),
-        SimpleItemGroup("wool_carpets", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.WOOL_CARPETS))),
-        SimpleItemGroup("goat_horns", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.GOAT_HORN))),
-        SimpleItemGroup("suspicious_stews", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.SUSPICIOUS_STEW))),
-        SimpleItemGroup("banners", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.BANNERS))),
-        SimpleItemGroup("shulker_boxes", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.SHULKER_BOXES))),
-        SimpleItemGroup("concretes", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.CONCRETES))),
-        SimpleItemGroup("concrete_powders", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.CONCRETE_POWDERS))),
-        SimpleItemGroup(
-            "glazed_terracottas", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.GLAZED_TERRACOTTAS))
-        ),
-        SimpleItemGroup("beds", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.BEDS))),
-        SimpleItemGroup("candles", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.CANDLES))),
-        SimpleItemGroup("paintings", StackGroup.Type.ITEM, listOf(Ingredient.of(Items.PAINTING))),
-        SimpleItemGroup(
-            "decorated_pot_sherds", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.DECORATED_POT_SHERDS))
-        ),
-        SimpleItemGroup("trim_templates", StackGroup.Type.ITEM, listOf(Ingredient.of(ItemTags.TRIM_TEMPLATES))),
-        SimpleItemGroup("buckets", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.BUCKETS))),
-        SimpleItemGroup("dusts", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.DUSTS))),
-        SimpleItemGroup("nuggets", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.NUGGETS))),
-        SimpleItemGroup("ingots", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.INGOTS))),
+        EmiStackGroup.of(ItemTags.SKULLS),
+        EmiStackGroup.of(ItemTags.RAILS),
+        EmiStackGroup.of(ModTags.Item.DYES),
+        EmiStackGroup.of(ItemTags.BUTTONS),
+        EmiStackGroup.of(ItemTags.SAPLINGS),
+        EmiStackGroup.of(ModTags.Item.ORES),
+        EmiStackGroup.of(ModTags.Item.SEEDS),
+        EmiStackGroup.of(ItemTags.LOGS),
+        EmiStackGroup.of(ItemTags.LEAVES),
+        EmiStackGroup.of(ItemTags.SIGNS),
+        EmiStackGroup.of(ItemTags.HANGING_SIGNS),
+        EmiStackGroup.of(ItemTags.BOATS),
+        EmiStackGroup.of(ItemTags.WALLS),
+        EmiStackGroup.of(ModTags.Item.GLASS_BLOCKS),
+        EmiStackGroup.of(ModTags.Item.GLASS_PANES),
+        EmiStackGroup.of(ItemTags.WOOL),
+        EmiStackGroup.of(ItemTags.FLOWERS),
+        EmiStackGroup.of(ItemTags.TERRACOTTA),
+        EmiStackGroup.of(ItemTags.WOOL_CARPETS),
+        SimpleItemGroup("goat_horns", listOf(Ingredient.of(Items.GOAT_HORN))),
+        SimpleItemGroup("suspicious_stews", listOf(Ingredient.of(Items.SUSPICIOUS_STEW))),
+        EmiStackGroup.of(ItemTags.BANNERS),
+        EmiStackGroup.of(ModTags.Item.SHULKER_BOXES),
+        EmiStackGroup.of(ModTags.Item.CONCRETES),
+        EmiStackGroup.of(ModTags.Item.CONCRETE_POWDERS),
+        EmiStackGroup.of(ModTags.Item.GLAZED_TERRACOTTAS),
+        EmiStackGroup.of(ItemTags.BEDS),
+        EmiStackGroup.of(ItemTags.CANDLES),
+        SimpleItemGroup("paintings", listOf(Ingredient.of(Items.PAINTING))),
+        EmiStackGroup.of(ItemTags.DECORATED_POT_SHERDS),
+        EmiStackGroup.of(ItemTags.TRIM_TEMPLATES),
+        EmiStackGroup.of(ModTags.Item.BUCKETS),
+        EmiStackGroup.of(ModTags.Item.DUSTS),
+        EmiStackGroup.of(ModTags.Item.NUGGETS),
+        EmiStackGroup.of(ModTags.Item.INGOTS),
         BannerPatternItemGroup(),
         SpawnEggItemGroup(),
         CopperBlockItemGroup(),
 
         // Mekanism
-        SimpleItemGroup("units", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_UNITS))),
-        SimpleItemGroup("dirty_dusts", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_DIRTY_DUSTS))),
-        SimpleItemGroup("clumps", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_CLUMPS))),
-        SimpleItemGroup("crystals", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_CRYSTALS))),
-        SimpleItemGroup("enriched", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_ENRICHED))),
-        SimpleItemGroup("shards", StackGroup.Type.ITEM, listOf(Ingredient.of(ModTags.Item.MEKANISM_SHARDS))),
+        EmiStackGroup.of(ModTags.Item.MEKANISM_UNITS),
+        EmiStackGroup.of(ModTags.Item.MEKANISM_DIRTY_DUSTS),
+        EmiStackGroup.of(ModTags.Item.MEKANISM_CLUMPS),
+        EmiStackGroup.of(ModTags.Item.MEKANISM_CRYSTALS),
+        EmiStackGroup.of(ModTags.Item.MEKANISM_ENRICHED),
+        EmiStackGroup.of(ModTags.Item.MEKANISM_SHARDS),
     )
 
     private val stackGroups = mutableListOf<StackGroup>()
@@ -113,7 +109,8 @@ object StackGroupManager {
 //        stackGroups.addAll(DEFAULT_STACK_GROUPS.filter { disabledStackGroups.contains(it.id) })
         STACK_GROUP_DIRECTORY_PATH.createDirectories().listDirectoryEntries("*.json").forEach {
             val json = JsonParser.parseString(it.readText())
-            SimpleItemGroup.CODEC.parse(JsonOps.INSTANCE, json).ifSuccess { group -> stackGroups += group }
+            val result = EmiStackGroup.parse(json, it.fileName)
+            if (result != null) stackGroups += result
         }
     }
 
@@ -155,7 +152,7 @@ object StackGroupManager {
     @Deprecated("Will be removed after the refactor of stack groups")
     internal fun create(tag: TagKey<Item>) {
         SimpleItemGroup.CODEC.encodeStart(
-            JsonOps.INSTANCE, SimpleItemGroup(tag.location, StackGroup.Type.ITEM, listOf(Ingredient.of(tag)))
+            JsonOps.INSTANCE, SimpleItemGroup(tag.location, listOf(Ingredient.of(tag)))
         )
             .ifSuccess { ret ->
                 (STACK_GROUP_DIRECTORY_PATH / (tag.location.path.replace("/", "__") + ".json")).writeText(ret.toString())

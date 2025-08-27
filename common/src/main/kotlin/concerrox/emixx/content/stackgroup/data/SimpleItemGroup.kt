@@ -8,14 +8,13 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.crafting.Ingredient
 
 class SimpleItemGroup(
-    id: ResourceLocation, type: Type,
+    id: ResourceLocation,
     val targets: List<Ingredient>,
-) : StackGroup(id, type) {
+) : StackGroup(id) {
 
     @Deprecated("Use constructor that takes a ResourceLocation")
-    constructor(id: String, type: Type, targets: List<Ingredient>) : this(
+    constructor(id: String, targets: List<Ingredient>) : this(
         ResourceLocation.withDefaultNamespace(id),
-        type,
         targets
     )
 
@@ -23,7 +22,6 @@ class SimpleItemGroup(
         val CODEC: Codec<SimpleItemGroup> = RecordCodecBuilder.create {
             it.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter(SimpleItemGroup::id),
-                Type.CODEC.fieldOf("type").forGetter(SimpleItemGroup::type),
                 Ingredient.CODEC_NONEMPTY.listOf().fieldOf("contents").forGetter(SimpleItemGroup::targets),
             ).apply(it, ::SimpleItemGroup)
         }
