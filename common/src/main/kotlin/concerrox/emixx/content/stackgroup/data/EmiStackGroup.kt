@@ -31,10 +31,18 @@ class EmiStackGroup(
                     throw Exception("Contents are either not present or not a list")
 
                 val targets: MutableSet<EmiIngredient> = Sets.newHashSet()
-                for (stack in json.getAsJsonArray("contents")) {
-                    val ingredient = EmiIngredientSerializer.getDeserialized(stack)
+                for (element in json.getAsJsonArray("contents")) {
+                    val ingredient = EmiIngredientSerializer.getDeserialized(element)
                     targets.add(ingredient)
                     targets.addAll(ingredient.emiStacks)
+                }
+
+                if (GsonHelper.isArrayNode(json, "exclusions")) {
+                    for (element in json.getAsJsonArray("exclusions")) {
+                        val ingredient = EmiIngredientSerializer.getDeserialized(element)
+                        targets.remove(ingredient)
+                        targets.removeAll(ingredient.emiStacks)
+                    }
                 }
 
                 return EmiStackGroup(id, targets)
