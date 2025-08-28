@@ -3,7 +3,6 @@ package concerrox.emixx.content.stackgroup
 import concerrox.emixx.content.ScreenManager.ENTRY_SIZE
 import concerrox.emixx.content.stackgroup.data.StackGroup
 import concerrox.emixx.text
-import concerrox.emixx.util.GuiGraphicsUtils
 import concerrox.emixx.util.push
 import dev.emi.emi.EmiPort
 import dev.emi.emi.EmiRenderHelper
@@ -45,11 +44,26 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
                 fill(x, y, ENTRY_SIZE - 2, ENTRY_SIZE - 2, 0x30FFFFFF)
             }
 
-            if (items.size >= 3) GuiGraphicsUtils.renderItem(raw, items[2].itemStack, x + 3.5F, y + 0.5F, 12F)
-            matrices().translate(0F, 0F, 10F)
-            if (items.size >= 2) GuiGraphicsUtils.renderItem(raw, items[1].itemStack, x + 2F, y + 2F, 12F)
-            matrices().translate(0F, 0F, 10F)
-            if (items.size >= 1) GuiGraphicsUtils.renderItem(raw, items[0].itemStack, x + 0.5F, y + 3.5F, 12F)
+            matrices().pushPose()
+            // (16 - (16 * 0.8)) / 2 = 1.6 (keeps scaled stacks centered)
+            matrices().translate(x.toFloat() + 1.6F, y.toFloat() + 1.6F, 0F)
+            matrices().scale(0.8F, 0.8F, 0.8F)
+            if (items.size == 1) {
+                items[0].render(raw, 0, 0, delta, flags)
+            } else if (items.size == 2) {
+                matrices().translate(0.5F, 0F, 0F)
+                items[1].render(raw, 1, -1, delta, flags)
+                matrices().translate(0F, 0F, 10F)
+                items[0].render(raw, -2, 1, delta, flags)
+            } else if (items.size >= 3) {
+                items[2].render(raw, 3, -2, delta, flags)
+                matrices().translate(0F, 0F, 10F)
+                items[1].render(raw, 0, 0, delta, flags)
+                matrices().translate(0F, 0F, 10F)
+                items[0].render(raw, -3, 2, delta, flags)
+            }
+            matrices().popPose()
+
             EmiRenderHelper.renderAmount(this, x, y, EmiPort.literal(if (isExpanded) "-" else "+"))
         }
     }
