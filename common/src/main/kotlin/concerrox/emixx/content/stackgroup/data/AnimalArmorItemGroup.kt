@@ -5,7 +5,7 @@ import dev.emi.emi.api.stack.EmiStack
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.AnimalArmorItem
 
-internal class AnimalArmorItemGroup: StackGroup(ResourceLocation.withDefaultNamespace("animal_armors"), Type.ITEM) {
+internal class AnimalArmorItemGroup: StackGroup(ResourceLocation.withDefaultNamespace("animal_armors")) {
 
     override fun match(stack: EmiIngredient): Boolean {
         if (stack !is EmiStack) return false
