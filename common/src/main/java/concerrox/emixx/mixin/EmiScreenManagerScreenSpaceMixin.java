@@ -84,8 +84,8 @@ public abstract class EmiScreenManagerScreenSpaceMixin {
      */
     @Overwrite
     public void render(EmiDrawContext context, int mouseX, int mouseY, float delta, int startIndex) {
-        if (startIndex != Layout.INSTANCE.getSi()) {
-            Layout.INSTANCE.setSi(startIndex);
+        if (startIndex != Layout.INSTANCE.getStartIndex()) {
+            Layout.INSTANCE.setStartIndex(startIndex);
             Layout.INSTANCE.setTextureDirty(true);
             Layout.INSTANCE.setClean(false);
         }
@@ -133,7 +133,7 @@ public abstract class EmiScreenManagerScreenSpaceMixin {
             batcher.draw();
             context.pop();
             if (getType() == SidebarType.INDEX)
-                Layout.INSTANCE.show(EmiScreenManager.ScreenSpace.class.cast(this), context);
+                Layout.INSTANCE.buildLayoutTiles(EmiScreenManager.ScreenSpace.class.cast(this), context);
         }
     }
 

@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import java.util.*
 
-class EmiGroupStack(val group: StackGroup) : EmiStack() {
+class EmiGroupStack(val group: StackGroup, internal val itemsNew: List<GroupedEmiStack<EmiStack>>) : EmiStack() {
 
     var isExpanded = false
 
@@ -31,7 +31,14 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
 
     override fun equals(other: Any?) = this === other
     override fun toString() = key.toString()
-    override fun getTooltip() = tooltipText.map { ClientTooltipComponent.create(it.visualOrderText) }
+    override fun getTooltip() = listOf(
+        ClientTooltipComponent.create(name.visualOrderText),
+        ClientTooltipComponent.create(
+            Component.literal(items.size.toString()).withStyle(ChatFormatting.DARK_GRAY)
+                .append(text("stackgroup", "tooltip").withStyle(ChatFormatting.DARK_GRAY)).visualOrderText
+        ),
+    )
+
     override fun getComponentChanges(): DataComponentPatch = DataComponentPatch.EMPTY
 
     override fun render(raw: GuiGraphics, x: Int, y: Int, delta: Float, flags: Int) {
@@ -68,7 +75,7 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
         }
     }
 
-    override fun copy() = EmiGroupStack(group).apply {
+    override fun copy() = EmiGroupStack(group, listOf()).apply {
         isExpanded = this@EmiGroupStack.isExpanded
         items.addAll(this@EmiGroupStack.items)
     }
@@ -82,7 +89,8 @@ class EmiGroupStack(val group: StackGroup) : EmiStack() {
     }
 
     private fun buildStackDefaultName(): String {
-        return group.id.path.split("_").joinToString(" ") { it.replaceFirstChar { c -> c.titlecase(Locale.getDefault()) } }
+        return group.id.path.split("_")
+            .joinToString(" ") { it.replaceFirstChar { c -> c.titlecase(Locale.getDefault()) } }
     }
 
     override fun hashCode(): Int {

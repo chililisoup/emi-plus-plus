@@ -20,10 +20,11 @@ public class EmiSearchSearchWorkerMixin {
             target = "Ldev/emi/emi/search/EmiSearch;apply(Ldev/emi/emi/search/EmiSearch$SearchWorker;Ljava/util/List;)V"))
     public void run(EmiSearch.SearchWorker worker, List<? extends EmiIngredient> stacks, Operation<Void> original) {
         synchronized (EmiSearch.class) {
-            original.call(worker, stacks);
             if (EmiScreenManager.getSearchPanel().getType() == SidebarType.INDEX) {
                 //noinspection unchecked: All the stacks in the index are EmiStack
                 StackManager.INSTANCE.buildStacks$emixx_common((List<? extends EmiStack>) stacks);
+            } else {
+                original.call(worker, stacks);
             }
         }
     }

@@ -1,6 +1,7 @@
 package concerrox.emixx.content.stackgroup.gui
 
 import concerrox.emixx.config.EmiPlusPlusConfig
+import concerrox.emixx.content.StackManager
 import concerrox.emixx.content.stackgroup.StackGroupManager
 import concerrox.emixx.text
 import net.fabricmc.api.EnvType
@@ -33,8 +34,10 @@ class StackGroupConfigScreen : Screen(text("gui", "stack_group_config")) {
         layout.addToFooter(Button.builder(CommonComponents.GUI_DONE) {
             EmiPlusPlusConfig.disabledStackGroups.set(disabledStackGroups.map { it.toString() }.toList())
             EmiPlusPlusConfig.save()
-            StackGroupManager.reload()
             onClose()
+
+            StackGroupManager.reload()
+            StackManager.reload()
         }.width(200).build())
         layout.visitWidgets(::addRenderableWidget)
         repositionElements()

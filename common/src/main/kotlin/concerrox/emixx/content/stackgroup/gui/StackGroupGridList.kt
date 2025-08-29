@@ -2,7 +2,6 @@ package concerrox.emixx.content.stackgroup.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
 import concerrox.emixx.content.ScreenManager.ENTRY_SIZE
-import concerrox.emixx.content.StackManager
 import concerrox.emixx.content.stackgroup.EmiGroupStack
 import concerrox.emixx.content.stackgroup.StackGroupManager
 import concerrox.emixx.gui.components.Switch
@@ -30,7 +29,7 @@ class StackGroupGridList(
     //override fun getListOutlinePadding() = TripleEntry.GUTTER
 
     fun add() {
-        StackGroupManager.buildGroupedStacksForConfig(StackManager.indexStacks).values.chunked(3).forEach { triple ->
+        StackGroupManager.stackGroupToGroupStacks.values.chunked(3).forEach { triple ->
             addEntry(TripleEntry(this, triple))
         }
     }

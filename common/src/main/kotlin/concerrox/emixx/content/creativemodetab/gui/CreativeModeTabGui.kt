@@ -36,10 +36,11 @@ object CreativeModeTabGui {
     private var scrollAccumulator = 0.0
 
     private fun onLayout() {
+        // TODO: check this
         val indexScreenSpace = ScreenManager.indexScreenSpace
-        val startX = indexScreenSpace.tx
-        val startY = indexScreenSpace.ty - (if (isHeaderVisible) EMI_HEADER_HEIGHT else 0) - CREATIVE_MODE_TAB_HEIGHT
-        val tileW = indexScreenSpace.tw
+        val startX = indexScreenSpace?.tx ?: 0
+        val startY = (indexScreenSpace?.ty ?: 0) - (if (isHeaderVisible) EMI_HEADER_HEIGHT else 0) - CREATIVE_MODE_TAB_HEIGHT
+        val tileW = indexScreenSpace?.tw ?: 0
         tabCount = (tileW.toUInt() - 2u).coerceIn(1u, UByte.MAX_VALUE.toUInt())
 
         buttonPrevious.pos(startX, startY + 2)

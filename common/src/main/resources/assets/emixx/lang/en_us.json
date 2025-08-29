@@ -1,5 +1,5 @@
 {
-  "stackgroup.emixx.tooltip": "%s items(s)",
+  "stackgroup.emixx.tooltip": " item(s)",
 
   "gui.emixx.possible_enchantments": "Possible enchantments: ",
   "gui.emixx.possible_enchantments_for_enchanted_book": "All the non-treasure enchantments",

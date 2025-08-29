@@ -2,6 +2,7 @@ package concerrox.emixx.neoforge
 
 import concerrox.emixx.EmiPlusPlus
 import concerrox.emixx.content.villagertrade.VillagerTradeManager
+import concerrox.emixx.neoforge.mixin.neoforge.BasicItemListingAccessor
 import dev.emi.emi.api.stack.EmiStack
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
@@ -15,8 +16,9 @@ class EmiPlusPlusNeoForge(eventBus: IEventBus, container: ModContainer) {
         EmiPlusPlus.initialize(EmiPlusPlusPlatformNeoForge)
 
         VillagerTradeManager.addCustomVillagerTradeType(BasicItemListing::class.java) { itemListing ->
-            val inputs = mutableListOf(EmiStack.of(itemListing.price), EmiStack.of(itemListing.price2))
-            val output = mutableListOf(EmiStack.of(itemListing.forSale))
+            val accessor = itemListing as BasicItemListingAccessor
+            val inputs = mutableListOf(EmiStack.of(accessor.price), EmiStack.of(accessor.price2))
+            val output = mutableListOf(EmiStack.of(accessor.forSale))
             inputs to output
         }
     }

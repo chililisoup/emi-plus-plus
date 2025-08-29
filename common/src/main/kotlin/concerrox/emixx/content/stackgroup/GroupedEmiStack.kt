@@ -16,9 +16,9 @@ class GroupedEmiStack<T : EmiStack>(val realStack: T, val stackGroup: StackGroup
 
     override fun render(draw: GuiGraphics, x: Int, y: Int, delta: Float, flags: Int) =
         realStack.render(draw, x, y, delta, flags)
-    override fun comparison(comparison: Comparison?): EmiStack = realStack.comparison(comparison)
-    override fun comparison(comparison: Function<Comparison, Comparison>?): EmiStack = realStack.comparison(comparison)
-    override fun setRemainder(stack: EmiStack?): EmiStack = realStack.setRemainder(stack)
+    override fun comparison(comparison: Comparison): EmiStack = realStack.comparison(comparison)
+    override fun comparison(comparison: Function<Comparison, Comparison>): EmiStack = realStack.comparison(comparison)
+    override fun setRemainder(stack: EmiStack): EmiStack = realStack.setRemainder(stack)
     override fun getEmiStacks(): MutableList<EmiStack> = realStack.emiStacks
     override fun getRemainder(): EmiStack = realStack.remainder
     override fun isEmpty() = realStack.isEmpty
@@ -39,7 +39,7 @@ class GroupedEmiStack<T : EmiStack>(val realStack: T, val stackGroup: StackGroup
     override fun getItemStack(): ItemStack = realStack.itemStack
     override fun isEqual(stack: EmiStack?): Boolean = realStack.isEqual(stack)
     override fun isEqual(stack: EmiStack?, comparison: Comparison?): Boolean = realStack.isEqual(stack, comparison)
-    override fun getTooltip(): MutableList<ClientTooltipComponent> = realStack.getTooltip()
+    override fun getTooltip(): MutableList<ClientTooltipComponent> = realStack.tooltip
     override fun equals(other: Any?): Boolean = realStack == other
     override fun hashCode(): Int = realStack.hashCode()
     override fun toString(): String = realStack.toString()

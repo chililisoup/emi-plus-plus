@@ -19,7 +19,7 @@ object StackManager {
     internal var indexStacks = EmiStackList.filteredStacks
 
     /**
-     * The original stacks to be searched, could be from the index, a creative mode tab, or a custom collection tab.
+     * The stacks to be searched, could be from the index, a creative mode tab, or a custom collection tab.
      */
     internal var sourceStacks = listOf<EmiStack>()
 
@@ -51,17 +51,15 @@ object StackManager {
     /**
      * --------------------------------------
      */
-    internal var stackTextureGrid = mutableListOf<Layout.REn>()
+    internal var stackTextureGrid = mutableListOf<Layout.Tile>()
 
     internal fun reload() {
         indexStacks = EmiStackList.filteredStacks
         groupedIndexStacks = listOf()
+        StackGroupManager.buildGroupedEmiStacksAndStackGroupToContents(indexStacks)
         updateSourceStacks(indexStacks)
     }
 
-    /**
-     * Build the stacks from a custom source
-     */
     internal fun updateSourceStacks(sourceStacks: List<EmiStack>) {
         this.sourceStacks = sourceStacks
         buildStacks(sourceStacks)
@@ -91,14 +89,17 @@ object StackManager {
         } else StackGroupManager.buildGroupedStacks(searchedStacks)
     }
 
+    // TODO: refactor
     private fun buildDisplayedStacks() {
         displayedStacks = groupedStacks.toMutableList()
         var i = 0
         while (i < displayedStacks.size) {
-            val stack = displayedStacks[i]
-            if (stack is EmiGroupStack) {
-                if (stack.isExpanded) {
-                    displayedStacks.addAll(i + 1, stack.items)
+            val emiStack = displayedStacks[i]
+            if (emiStack is EmiGroupStack) {
+                if (emiStack.items.size == 1) {
+                    displayedStacks[i] = emiStack.items[0].realStack
+                } else if (emiStack.isExpanded) {
+                    displayedStacks.addAll(i + 1, emiStack.items)
                 }
             }
             i++

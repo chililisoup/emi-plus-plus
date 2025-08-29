@@ -8,13 +8,15 @@ import dev.emi.emi.screen.EmiScreenManager
 // TODO: this needs to be refactored as it is quiet a mess
 object Layout {
 
-    data class REn(val x: Int, val y: Int, var type: Int)
-
-    enum class RF(val bit: Int) {
-        LEFT(1), TOP(2), RIGHT(4), BOTTOM(8),
+    internal data class Tile(val x: Int, val y: Int, var type: Int) {
+        internal fun check(bit: TileType) = this.type and bit.bit == bit.bit
     }
 
-    var si = -10
+    internal enum class TileType(val bit: Int) {
+        LEFT(1), TOP(2), RIGHT(4), BOTTOM(8), TOP_LEFT(16), TOP_RIGHT(32), BOTTOM_LEFT(64), BOTTOM_RIGHT(128)
+    }
+
+    var startIndex = -10
     var isClean = true
 
     var isTextureDirty = true
@@ -22,31 +24,57 @@ object Layout {
             field = value
             // TODO: this is not safe
             StackManager.stackGrid =
-                Array(ScreenManager.indexScreenSpace.th + 9) { arrayOfNulls(ScreenManager.indexScreenSpace.tw + 9) }
+                Array(ScreenManager.indexScreenSpace?.th ?: 0) { arrayOfNulls(ScreenManager.indexScreenSpace?.tw ?: 0) }
         }
 
-    fun show(screenSpace: EmiScreenManager.ScreenSpace, context: EmiDrawContext) {
+    // TODO: refactor this
+    fun buildLayoutTiles(screenSpace: EmiScreenManager.ScreenSpace, context: EmiDrawContext) {
         if (isTextureDirty) {
             StackManager.stackTextureGrid.clear()
             for (y in 0 until screenSpace.th) {
                 for (x in 0 until screenSpace.tw) {
-                    val stack = StackManager.stackGrid[y][x]
-                    if (stack != null && stack is GroupedEmiStack<*>) {
-                        val obj = REn(x, y, 0)
-                        if (y == 0 || ge(y - 1, x)?.stackGroup != stack.stackGroup) {
-                            obj.type = obj.type or RF.TOP.bit
-                        }
-                        if (x == 0 || ge(y, x - 1)?.stackGroup != stack.stackGroup) {
-                            obj.type = obj.type or RF.LEFT.bit
-                        }
-                        if (y == screenSpace.th - 1 || ge(y + 1, x)?.stackGroup != stack.stackGroup) {
-                            obj.type = obj.type or RF.BOTTOM.bit
-                        }
-                        if (x == screenSpace.tw - 1 || ge(y, x + 1)?.stackGroup != stack.stackGroup) {
-                            obj.type = obj.type or RF.RIGHT.bit
-                        }
-                        if (obj.type != 0) StackManager.stackTextureGrid.add(obj)
+                    val emiStack = StackManager.stackGrid[y][x]
+                    if (emiStack == null || emiStack !is GroupedEmiStack<*>) continue
+
+                    val tile = Tile(x, y, 0)
+                    if (y == 0 || at(y - 1, x)?.stackGroup != emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.TOP.bit
                     }
+                    if (x == 0 || at(y, x - 1)?.stackGroup != emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.LEFT.bit
+                    }
+                    if (y == screenSpace.th - 1 || at(y + 1, x)?.stackGroup != emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.BOTTOM.bit
+                    }
+                    if (x == screenSpace.tw - 1 || at(y, x + 1)?.stackGroup != emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.RIGHT.bit
+                    }
+//                    if (tile.type != 0) {
+//                        StackManager.stackTextureGrid.add(tile)
+//                        continue
+//                    }
+
+                    if (at(y - 1, x - 1)?.stackGroup != emiStack.stackGroup
+                        && at(y - 1, x)?.stackGroup == emiStack.stackGroup
+                        && at(y, x - 1)?.stackGroup == emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.TOP_LEFT.bit
+                    }
+                    if (at(y - 1, x + 1)?.stackGroup != emiStack.stackGroup
+                        && at(y - 1, x)?.stackGroup == emiStack.stackGroup
+                        && at(y, x + 1)?.stackGroup == emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.TOP_RIGHT.bit
+                    }
+                    if (at(y + 1, x - 1)?.stackGroup != emiStack.stackGroup
+                        && at(y + 1, x)?.stackGroup == emiStack.stackGroup
+                        && at(y, x - 1)?.stackGroup == emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.BOTTOM_LEFT.bit
+                    }
+                    if (at(y + 1, x + 1)?.stackGroup != emiStack.stackGroup
+                        && at(y + 1, x)?.stackGroup == emiStack.stackGroup
+                        && at(y, x + 1)?.stackGroup == emiStack.stackGroup) {
+                        tile.type = tile.type or TileType.BOTTOM_RIGHT.bit
+                    }
+                    if (tile.type != 0) StackManager.stackTextureGrid.add(tile)
                 }
             }
         }
@@ -58,25 +86,42 @@ object Layout {
         StackManager.stackTextureGrid.forEach {
             val px = screenSpace.tx + it.x * ENTRY_SIZE
             val py = screenSpace.ty + it.y * ENTRY_SIZE
-            if (it.check(RF.TOP)) {
+            var ret = false
+            if (it.check(TileType.TOP)) {
                 context.fill(px, py, ENTRY_SIZE, 1, 0x66FFFFFF)
+                ret = true
             }
-            if (it.check(RF.LEFT)) {
+            if (it.check(TileType.LEFT)) {
                 context.fill(px, py, 1, ENTRY_SIZE, 0x66FFFFFF)
+                ret = true
             }
-            if (it.check(RF.BOTTOM)) {
+            if (it.check(TileType.BOTTOM)) {
                 context.fill(px, py + 17, ENTRY_SIZE, 1, 0x66FFFFFF)
+                ret = true
             }
-            if (it.check(RF.RIGHT)) {
+            if (it.check(TileType.RIGHT)) {
                 context.fill(px + 17, py, 1, ENTRY_SIZE, 0x66FFFFFF)
+                ret = true
+            }
+//            if (ret) return@forEach
+
+            if (it.check(TileType.TOP_LEFT)) {
+                context.fill(px, py, 1, 1, 0x66FFFFFF)
+            }
+            if (it.check(TileType.TOP_RIGHT)) {
+                context.fill(px + ENTRY_SIZE - 1, py, 1, 1, 0x66FFFFFF)
+            }
+            if (it.check(TileType.BOTTOM_LEFT)) {
+                context.fill(px, py + ENTRY_SIZE - 1, 1, 1, 0x66FFFFFF)
+            }
+            if (it.check(TileType.BOTTOM_RIGHT)) {
+                context.fill(px + ENTRY_SIZE - 1, py + ENTRY_SIZE - 1, 1, 1, 0x66FFFFFF)
             }
         }
     }
 
-    private fun ge(y: Int, x: Int): GroupedEmiStack<*>? {
+    private fun at(y: Int, x: Int): GroupedEmiStack<*>? {
         return StackManager.stackGrid.getOrNull(y)?.getOrNull(x) as? GroupedEmiStack<*>
     }
 
 }
-
-inline fun Layout.REn.check(bit: Layout.RF) = this.type and bit.bit == bit.bit

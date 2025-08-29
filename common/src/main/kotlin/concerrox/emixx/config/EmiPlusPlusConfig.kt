@@ -89,6 +89,8 @@ class EmiPlusPlusConfig(builder: ModConfigSpec.Builder) {
                 )
             }, { "" }, { it is String })
         }
+        builder.group("miscellaneous") {
+        }
     }
 
 }

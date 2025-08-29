@@ -1,6 +1,7 @@
 package concerrox.emixx.content.stackgroup.data
 
 import com.google.common.collect.Sets
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import concerrox.emixx.EmiPlusPlus
@@ -17,7 +18,7 @@ class EmiStackGroup(
 ) : StackGroup(id) {
 
     companion object {
-        fun parse(json: JsonElement, fileName: Path?): EmiStackGroup? {
+        fun parse(json: JsonElement, fileName: Path): EmiStackGroup? {
             try {
                 if (json !is JsonObject)
                     throw Exception("Not a JSON object")
@@ -52,18 +53,30 @@ class EmiStackGroup(
             }
         }
 
+        // TODO: check this
         fun <T> of(tag: TagKey<T>): EmiStackGroup {
-            val targets: MutableSet<EmiIngredient> = Sets.newHashSet()
+            val targets = mutableSetOf<EmiIngredient>()
             val ingredient = EmiIngredient.of(tag)
             targets.add(ingredient)
             targets.addAll(ingredient.emiStacks)
-
             return EmiStackGroup(tag.location, targets)
         }
+
+    }
+
+    fun serialize(): JsonElement {
+        val json = JsonObject()
+        json.addProperty("id", id.toString())
+        val contents = JsonArray()
+        for (ingredient in targets) {
+            contents.add(EmiIngredientSerializer.getSerialized(ingredient))
+        }
+        json.add("contents", contents)
+        return json
     }
 
     override fun match(stack: EmiIngredient): Boolean {
-        return targets.contains(stack)
+        return targets.any { it == stack }
     }
 
 }

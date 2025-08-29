@@ -20,6 +20,7 @@ accessible field net/minecraft/world/item/CreativeModeTabs OP_BLOCKS Lnet/minecr
 accessible field net/minecraft/world/item/CreativeModeTabs SEARCH Lnet/minecraft/resources/ResourceKey;
 
 accessible method net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen selectTab (Lnet/minecraft/world/item/CreativeModeTab;)V
+accessible field net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen searchBox Lnet/minecraft/client/gui/components/EditBox;
 
 accessible class net/minecraft/world/entity/npc/VillagerTrades$EmeraldForItems
 accessible field net/minecraft/world/entity/npc/VillagerTrades$EmeraldForItems itemStack Lnet/minecraft/world/item/trading/ItemCost;
@@ -53,8 +54,3 @@ accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForIte
 accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForItemsAndEmeralds emeraldCost I
 accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForItemsAndEmeralds fromItem Lnet/minecraft/world/item/Item;
 accessible field net/minecraft/world/entity/npc/VillagerTrades$TippedArrowForItemsAndEmeralds fromCount I
-
-# NeoForge
-accessible field net/neoforged/neoforge/common/BasicItemListing price Lnet/minecraft/world/item/ItemStack;
-accessible field net/neoforged/neoforge/common/BasicItemListing price2 Lnet/minecraft/world/item/ItemStack;
-accessible field net/neoforged/neoforge/common/BasicItemListing forSale Lnet/minecraft/world/item/ItemStack;

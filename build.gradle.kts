@@ -1,9 +1,9 @@
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.2.0"
     id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
+    id("dev.architectury.loom") version "1.11-SNAPSHOT" apply false
     id("com.gradleup.shadow") version "8.3.6" apply false
 }
 
@@ -37,6 +37,8 @@ subprojects {
         maven("https://maven.parchmentmc.org") // ParchmentMC
         maven("https://maven.neoforged.net/releases/") // NeoForge
         maven("https://maven.terraformersmc.com/") // EMI
+        maven("https://jitpack.io/") // Animated GIF
+        maven("https://maven.latvian.dev/releases/") // KubeJS, Rhino
         maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge Config API Port
     }
 

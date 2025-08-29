@@ -4,7 +4,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/emixx.accesswidener")
+    accessWidenerPath = file("src/main/resources/emixx-common.accesswidener")
 }
 
 val fabricLoaderVersion: String by rootProject
@@ -20,7 +20,16 @@ dependencies {
 
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:$mixinExtrasVersion")!!)!!)
+
+//    implementation("dev.emi:emi-fabric:${emiVersion}")
+//    modCompileOnly("dev.emi:emi-xplat-intermediary:$emiVersion")
     modCompileOnly("dev.emi:emi-xplat-intermediary:$emiVersion")
 
     modApi("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:$forgeConfigApiPortVersion")
+
+    modCompileOnly(libs.kubejs.neoforge)
+}
+
+tasks.remapJar {
+    addNestedDependencies = false
 }

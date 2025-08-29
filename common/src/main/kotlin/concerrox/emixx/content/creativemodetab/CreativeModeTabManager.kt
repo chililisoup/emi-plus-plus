@@ -59,13 +59,24 @@ object CreativeModeTabManager {
     }
 
     internal fun onTabSelected(tab: ItemTab) {
+        if (!Minecraft.isSameThread) {
+            Minecraft.execute { onTabSelected(tab) }
+            return
+        }
+        // TODO: refactor this
         currentTab = CreativeModeTabGui.tabNavigationBar.tabs.indexOf(tab).toUInt()
+
+        CreativeModeTabGui.tabNavigationBar.tabButtons.forEachIndexed { i, it ->
+            if (i.toUInt() != currentTab) it.isFocused = false
+        }
 
         val screen = Minecraft.screen
         // Pass if it's selected by clicking the tab bar from vanilla
         if (!isSelectingEmiPlusPlusCreativeModeTabByVanilla && EmiPlusPlusConfig.syncSelectedCreativeModeTab.get() && tab.creativeModeTab != null && screen is CreativeModeInventoryScreen) {
             isSelectingVanillaCreativeInventoryTabByEmiPlusPlus = true
             screen.selectTab(tab.creativeModeTab)
+            screen.searchBox.setCanLoseFocus(true)
+            screen.searchBox.isFocused = false
             isSelectingVanillaCreativeInventoryTabByEmiPlusPlus = false
         }
 
@@ -81,6 +92,8 @@ object CreativeModeTabManager {
     }
 
     internal fun onCreativeModeInventoryScreenTabSelected(tab: CreativeModeTab) {
+        val screen = Minecraft.screen as? CreativeModeInventoryScreen ?: return
+
         if (!EmiPlusPlusConfig.syncSelectedCreativeModeTab.get()) return
         var notHiddenTab = tab
         // Pass if it's selected by clicking the tab bar from EMI++
@@ -96,6 +109,8 @@ object CreativeModeTabManager {
                 CreativeModeTabGui.selectTab(tabIndex, false)
                 isSelectingEmiPlusPlusCreativeModeTabByVanilla = true
                 onTabSelected(page[tabIndex])
+                screen.searchBox.setCanLoseFocus(true)
+                screen.searchBox.isFocused = false
                 isSelectingEmiPlusPlusCreativeModeTabByVanilla = false
                 return
             }
@@ -110,9 +125,11 @@ object CreativeModeTabManager {
 
     private fun updateTabs(): List<ItemTab> {
         val page = getTabPage(currentTabPage)
-        CreativeModeTabGui.tabNavigationBar.setTabs(page)
+        // TODO: check this
+        val safePage = page.toMutableList()
+        CreativeModeTabGui.tabNavigationBar.setTabs(safePage)
         CreativeModeTabGui.tabNavigationBar.arrangeElements()
-        return page
+        return safePage
     }
 
 }

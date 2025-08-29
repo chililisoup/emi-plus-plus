@@ -1,5 +1,6 @@
 package concerrox.emixx.content.villagertrade
 
+import com.mojang.logging.LogUtils
 import concerrox.emixx.Minecraft
 import concerrox.emixx.res
 import concerrox.emixx.text
@@ -188,11 +189,13 @@ object VillagerTradeManager {
             }
 
             else -> {
-                val result = CUSTOM_VILLAGER_TRADE_TYPES.getOrElse(itemListing.javaClass.name) {
-                    throw IllegalStateException("Unsupported villager trade type: $itemListing")
-                }.invoke(itemListing)
-                inputs = result.first
-                output = result.second
+                CUSTOM_VILLAGER_TRADE_TYPES.getOrElse(itemListing.javaClass.name) {
+                    LogUtils.getLogger().warn("Unsupported villager trade type: $itemListing")
+                    return
+                }.invoke(itemListing).let {
+                    inputs = it.first
+                    output = it.second
+                }
             }
         }
         emiRegistry.addRecipe(VillagerTradeRecipe(profession, villagerLevel, inputs, output))

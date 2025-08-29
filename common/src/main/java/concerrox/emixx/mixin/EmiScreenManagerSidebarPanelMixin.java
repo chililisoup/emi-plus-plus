@@ -32,7 +32,7 @@ public abstract class EmiScreenManagerSidebarPanelMixin {
     @Shadow public abstract List<EmiScreenManager.ScreenSpace> getSpaces();
 
     @WrapOperation(method = "drawHeader", at = @At(value = "INVOKE",
-            target = "Ldev/emi/emi/EmiRenderHelper;getPageText(III)Lnet/minecraft/network/chat/Component;"))
+            target = "Ldev/emi/emi/EmiRenderHelper;getPageText(III)Lnet/minecraft/network/chat/Component;", remap = true))
     private Component replaceIndexHeader(int page, int total, int maxWidth, Operation<Component> original) {
         if (getType() == SidebarType.INDEX && ScreenManager.INSTANCE.getCustomIndexTitle$emixx_common() != null)
             return ScreenManager.INSTANCE.getCustomIndexTitle$emixx_common();

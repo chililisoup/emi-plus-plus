@@ -1,5 +1,6 @@
 package concerrox.emixx.mixin;
 
+import concerrox.emixx.content.StackManager;
 import concerrox.emixx.content.stackgroup.StackGroupManager;
 import concerrox.emixx.gui.components.ImageButton;
 import dev.emi.emi.api.recipe.EmiIngredientRecipe;
@@ -24,8 +25,11 @@ public class EmiIngredientRecipeMixin {
         if (EmiIngredientRecipe.class.cast(this) instanceof EmiTagRecipe emiTagRecipe) {
             widgets.addButton(0, 0, 12, 12, 50, 0, ImageButton.Companion.getTEXTURE$emixx_common(), () -> true, (b, n, k) -> {
                 StackGroupManager.INSTANCE.create$emixx_common((TagKey<Item>) emiTagRecipe.key);
+                StackGroupManager.INSTANCE.reload$emixx_common();
+                StackManager.INSTANCE.reload$emixx_common();
             });
-            widgets.addTooltip(List.of(ClientTooltipComponent.create(Component.literal("Create Stack Group").getVisualOrderText())), 0, 0, 12, 12);
+            widgets.addTooltip(List.of(ClientTooltipComponent.create(Component.literal("Create Stack Group")
+                    .getVisualOrderText())), 0, 0, 12, 12);
         }
     }
 

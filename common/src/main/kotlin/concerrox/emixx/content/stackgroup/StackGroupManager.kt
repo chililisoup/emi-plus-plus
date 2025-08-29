@@ -1,7 +1,6 @@
 package concerrox.emixx.content.stackgroup
 
 import com.google.gson.JsonParser
-import com.mojang.serialization.JsonOps
 import concerrox.emixx.config.EmiPlusPlusConfig
 import concerrox.emixx.content.stackgroup.data.*
 import concerrox.emixx.registry.ModTags
@@ -25,6 +24,7 @@ object StackGroupManager {
         SimpleItemGroup("splash_potions", listOf(Ingredient.of(Items.SPLASH_POTION))),
         SimpleItemGroup("lingering_potions", listOf(Ingredient.of(Items.LINGERING_POTION))),
         SimpleItemGroup("tipped_arrows", listOf(Ingredient.of(Items.TIPPED_ARROW))),
+
         EmiStackGroup.of(ModTags.Item.MUSIC_DISCS),
 
         EmiStackGroup.of(ItemTags.SHOVELS),
@@ -100,63 +100,72 @@ object StackGroupManager {
 
     private val stackGroups = mutableListOf<StackGroup>()
     internal var groupToGroupStacks = mapOf<StackGroup, EmiGroupStack>()
-    private var disabledStackGroups = listOf<ResourceLocation>()
 
-    fun reload() {
-        disabledStackGroups = EmiPlusPlusConfig.disabledStackGroups.get().map { ResourceLocation.parse(it) }
+    internal fun reload() {
         stackGroups.clear()
         stackGroups.addAll(DEFAULT_STACK_GROUPS)
-//        stackGroups.addAll(DEFAULT_STACK_GROUPS.filter { disabledStackGroups.contains(it.id) })
+        // TODO: check this
+        stackGroups.forEach {
+            it.isEnabled = true
+        }
         STACK_GROUP_DIRECTORY_PATH.createDirectories().listDirectoryEntries("*.json").forEach {
             val json = JsonParser.parseString(it.readText())
             val result = EmiStackGroup.parse(json, it.fileName)
             if (result != null) stackGroups += result
         }
+        EmiPlusPlusConfig.disabledStackGroups.get().forEach { disabledStackGroupId ->
+            stackGroups.firstOrNull { it.id == ResourceLocation.parse(disabledStackGroupId) }?.isEnabled = false
+        }
     }
 
     internal fun buildGroupedStacks(source: List<EmiStack>): List<EmiStack> {
         val result = mutableListOf<EmiStack>()
-        val addedGroupStacks = mutableListOf<EmiGroupStack>()
-        groupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
-        for (stack in source) {
-            var shouldAddStack = true
-            for (stackGroup in stackGroups) {
-                val groupStack = groupToGroupStacks[stackGroup]!!
-                if (stackGroup.match(stack)) {
-                    if (!disabledStackGroups.contains(stackGroup.id)) shouldAddStack =
-                        false // Once a stack matches a stackGroup, it shouldn't be added to the index page
-                    groupStack.items += GroupedEmiStack(stack, stackGroup)
-                    if (groupStack !in addedGroupStacks) {
-                        addedGroupStacks += groupStack
-                        if (!disabledStackGroups.contains(stackGroup.id)) result += groupStack
+        val addedStackGroups = mutableSetOf<StackGroup>()
+
+        val localGroupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group, listOf()) }
+        val groupsToCheck = stackGroups.toList()
+
+        for (emiStack in source) {
+            if (emiStack !in groupedEmiStacks) {
+                result += emiStack
+                continue
+            }
+            for (stackGroup in groupsToCheck) {
+                val groupStack = localGroupToGroupStacks[stackGroup]!!
+                if (stackGroup.match(emiStack)) {
+                    groupStack.items += GroupedEmiStack(emiStack, stackGroup)
+                    if (stackGroup !in addedStackGroups) {
+                        addedStackGroups += stackGroup
+                        if (stackGroup.isEnabled) result += groupStack
                     }
                 }
             }
-            if (shouldAddStack) result += stack
         }
+
+        groupToGroupStacks = localGroupToGroupStacks
         return result
     }
 
-    @Deprecated("Will be removed after the refactor of stack groups")
-    internal fun buildGroupedStacksForConfig(source: List<EmiStack>): Map<StackGroup, EmiGroupStack> {
-        val localGroupToGroupStacks = stackGroups.associateWith { group -> EmiGroupStack(group) }
-        for (stack in source) {
+    internal val groupedEmiStacks = hashSetOf<EmiStack>()
+    internal var stackGroupToGroupStacks = mapOf<StackGroup, EmiGroupStack>()
+
+    internal fun buildGroupedEmiStacksAndStackGroupToContents(source: List<EmiStack>) {
+        groupedEmiStacks.clear()
+        val stackGroupToGroupStacks = stackGroups.associateWith { EmiGroupStack(it, listOf()) }
+        for (emiStack in source) {
             for (stackGroup in stackGroups) {
-                val groupStack = localGroupToGroupStacks[stackGroup]!!
-                if (stackGroup.match(stack)) groupStack.items += GroupedEmiStack(stack, stackGroup)
+                if (!stackGroup.match(emiStack)) continue
+                if (stackGroup.isEnabled) groupedEmiStacks.add(emiStack)
+                stackGroupToGroupStacks[stackGroup]!!.items += GroupedEmiStack(emiStack, stackGroup)
             }
         }
-        return localGroupToGroupStacks
+        this.stackGroupToGroupStacks = stackGroupToGroupStacks
     }
 
     @Deprecated("Will be removed after the refactor of stack groups")
     internal fun create(tag: TagKey<Item>) {
-        SimpleItemGroup.CODEC.encodeStart(
-            JsonOps.INSTANCE, SimpleItemGroup(tag.location, listOf(Ingredient.of(tag)))
-        )
-            .ifSuccess { ret ->
-                (STACK_GROUP_DIRECTORY_PATH / (tag.location.path.replace("/", "__") + ".json")).writeText(ret.toString())
-            }
+        val filename = tag.location.toString().replace(":", "__").replace("/", "__") + ".json"
+        (STACK_GROUP_DIRECTORY_PATH / filename).writeText(EmiStackGroup.of(tag).serialize().toString())
     }
 
 }

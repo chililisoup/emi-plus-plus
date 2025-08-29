@@ -12,10 +12,10 @@ object ScreenManager {
     const val ENTRY_SIZE = 18
 
     lateinit var screen: Screen
-    lateinit var indexScreenSpace: EmiScreenManager.ScreenSpace
+    var indexScreenSpace: EmiScreenManager.ScreenSpace? = null
 
     internal val isSearching
-        get() = indexScreenSpace.search && EmiScreenManager.search.value.isNotEmpty()
+        get() = indexScreenSpace?.search == true && EmiScreenManager.search.value.isNotEmpty()
 
     private val isCreativeModeTabEnabled
         get() = EmiPlusPlusConfig.enableCreativeModeTabs.get()
@@ -36,7 +36,7 @@ object ScreenManager {
     }
 
     fun onMouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {
-        return if (isCreativeModeTabEnabled && CreativeModeTabGui.contains(mouseX, mouseY)) {
+        return if (isCreativeModeTabEnabled && indexScreenSpace != null && CreativeModeTabGui.contains(mouseX, mouseY)) {
             CreativeModeTabGui.onMouseScrolled(mouseX, mouseY, amount)
         } else false
     }
@@ -44,5 +44,4 @@ object ScreenManager {
     fun removeCustomIndexTitle(component: Component?) {
         if (customIndexTitle == component) customIndexTitle = null
     }
-
 }

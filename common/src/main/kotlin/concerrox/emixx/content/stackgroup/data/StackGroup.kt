@@ -5,6 +5,8 @@ import net.minecraft.resources.ResourceLocation
 
 abstract class StackGroup(val id: ResourceLocation) {
 
+    internal var isEnabled = true
+
     abstract fun match(stack: EmiIngredient): Boolean
 
 //    enum class Order(val value: String) : StringRepresentable {

@@ -8,36 +8,49 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = project(":common").loom.accessWidenerPath
+    accessWidenerPath = file("src/main/resources/emixx-common.accesswidener")
 }
 
 val common: Configuration by configurations.creating
 val shadowCommon: Configuration by configurations.creating
 val developmentFabric: Configuration by configurations.getting
-configurations {
+@Suppress("UnstableApiUsage") configurations {
     compileOnly.configure { extendsFrom(common) }
     runtimeOnly.configure { extendsFrom(common) }
     developmentFabric.extendsFrom(common)
 }
 
 val fabricLoaderVersion: String by rootProject
-val fabricLanguageKotlinVersion: String by project
 val forgeConfigApiPortVersion: String by project
+val neoForgeVersion: String by project
 dependencies {
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
-//    modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
+    modImplementation(libs.fabric.kotlin)
     modImplementation("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeConfigApiPortVersion")
+    modImplementation(libs.emi.fabric)
 
     common(project(":common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", "transformProductionFabric")) { isTransitive = false }
 }
 
+tasks.register<Copy>("copyAccessWidener") {
+    from(project(":common").loom.accessWidenerPath)
+    into("src/main/resources/")
+}
+
+tasks.named("validateAccessWidener") {
+    dependsOn("copyAccessWidener")
+}
+
 tasks.processResources {
+    dependsOn("copyAccessWidener")
     inputs.property("version", project.version)
     filesMatching("fabric.mod.json") {
-        expand(mapOf(
-            "version" to project.version,
-        ))
+        expand(
+            mapOf(
+                "version" to project.version,
+            )
+        )
     }
 }
 

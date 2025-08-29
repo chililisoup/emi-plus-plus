@@ -1,6 +1,14 @@
 package concerrox.emixx
 
+import com.google.gson.JsonElement
 import com.mojang.logging.LogUtils
+import concerrox.emixx.content.stackgroup.GroupedEmiStack
+import dev.emi.emi.api.stack.EmiIngredient
+import dev.emi.emi.api.stack.EmiStack
+import dev.emi.emi.api.stack.serializer.EmiIngredientSerializer
+import dev.emi.emi.api.stack.serializer.EmiStackSerializer
+import dev.emi.emi.registry.EmiIngredientSerializers
+import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
