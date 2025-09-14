@@ -11,13 +11,14 @@ import dev.emi.emi.screen.EmiScreenManager
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
 
 object CreativeModeTabManager {
 
-    private val HIDDEN_CREATIVE_MODE_TABS = listOf(
-        CreativeModeTabs.INVENTORY, CreativeModeTabs.HOTBAR, CreativeModeTabs.OP_BLOCKS, CreativeModeTabs.SEARCH
+    val HIDDEN_CREATIVE_MODE_TABS = listOf(
+        CreativeModeTabs.INVENTORY, CreativeModeTabs.HOTBAR, CreativeModeTabs.SEARCH
     ).map(BuiltInRegistries.CREATIVE_MODE_TAB::get)
 
     private var currentTabPage = 0u
@@ -28,13 +29,20 @@ object CreativeModeTabManager {
     private var isSelectingEmiPlusPlusCreativeModeTabByVanilla = false
 
     private val indexCreativeModeTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.SEARCH)
-    private val creativeModeTabs = BuiltInRegistries.CREATIVE_MODE_TAB.toMutableList().apply {
-        removeIf { it in HIDDEN_CREATIVE_MODE_TABS }
+    private val disabledCreativeModeTabs = mutableListOf(*loadDisabledTabs().toTypedArray())
+    private val creativeModeTabs = getVisibleCreativeModeTabs()
+
+    internal fun loadDisabledTabs() = EmiPlusPlusConfig.disabledCreativeModeTabs.get().map {
+        BuiltInRegistries.CREATIVE_MODE_TAB.get(ResourceLocation.parse(it))
+    }.mapNotNull { creativeModeTab -> creativeModeTab }
+
+    internal fun getVisibleCreativeModeTabs() = BuiltInRegistries.CREATIVE_MODE_TAB.toMutableList().apply {
+        removeIf { shouldHideTab(it) }
         addFirst(indexCreativeModeTab)
     }
 
     internal fun initialize() {
-        lastTabPage = creativeModeTabs.size.toUInt() / CreativeModeTabGui.tabCount
+        lastTabPage = (creativeModeTabs.size - 1).toUInt() / CreativeModeTabGui.tabCount
         currentTabPage = 0u
         val page = updateTabs()
 
@@ -45,6 +53,17 @@ object CreativeModeTabManager {
         CreativeModeTabGui.selectTab(0, false)
         onTabSelected(CreativeModeTabGui.tabNavigationBar.tabs[0] as ItemTab)
     }
+
+    internal fun reload() {
+        disabledCreativeModeTabs.clear()
+        disabledCreativeModeTabs.addAll(loadDisabledTabs())
+
+        creativeModeTabs.clear()
+        creativeModeTabs.addAll(getVisibleCreativeModeTabs())
+    }
+
+    internal fun shouldHideTab(tab: CreativeModeTab) =
+        !tab.shouldDisplay() || tab in HIDDEN_CREATIVE_MODE_TABS || tab in disabledCreativeModeTabs
 
     @Suppress("unused_parameter")
     internal fun nextPage(button: Button? = null) {
@@ -98,7 +117,7 @@ object CreativeModeTabManager {
         var notHiddenTab = tab
         // Pass if it's selected by clicking the tab bar from EMI++
         if (isSelectingVanillaCreativeInventoryTabByEmiPlusPlus) return
-        if (notHiddenTab in HIDDEN_CREATIVE_MODE_TABS && indexCreativeModeTab != null) {
+        if (shouldHideTab(tab) && indexCreativeModeTab != null) {
             notHiddenTab = indexCreativeModeTab // If the tab is hidden in EMI++, select the index tab
         }
         for (i in 0u..lastTabPage) {
