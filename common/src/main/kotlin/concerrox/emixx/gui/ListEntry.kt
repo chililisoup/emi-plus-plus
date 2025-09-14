@@ -58,9 +58,9 @@ abstract class ListEntry(private val container: ContainerEventHandler) :
                     font,
                     it,
                     startX,
-                    startY - 8,
+                    startY,
                     startX + maxWidth,
-                    startY + 12,
+                    startY + 2 + font.lineHeight,
                     0xFFFFFF
                 )
             }
