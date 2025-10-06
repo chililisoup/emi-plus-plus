@@ -23,7 +23,7 @@ object CreativeModeTabManager {
 
     private var currentTabPage = 0u
     private var lastTabPage = 0u
-    private var currentTab = 0u
+    private var currentTab: UInt? = null
 
     private var isSelectingVanillaCreativeInventoryTabByEmiPlusPlus = false
     private var isSelectingEmiPlusPlusCreativeModeTabByVanilla = false
@@ -50,8 +50,10 @@ object CreativeModeTabManager {
 
         // TODO: fix the sound
         // Select the index tab by default
-        CreativeModeTabGui.selectTab(0, false)
-        onTabSelected(CreativeModeTabGui.tabNavigationBar.tabs[0] as ItemTab)
+        if (currentTab == null) {
+            CreativeModeTabGui.selectTab(0, false)
+            onTabSelected(CreativeModeTabGui.tabNavigationBar.tabs[0] as ItemTab)
+        }
     }
 
     internal fun reload() {
@@ -83,7 +85,9 @@ object CreativeModeTabManager {
             return
         }
         // TODO: refactor this
-        currentTab = CreativeModeTabGui.tabNavigationBar.tabs.indexOf(tab).toUInt()
+        val newTab = CreativeModeTabGui.tabNavigationBar.tabs.indexOf(tab).toUInt()
+        if (currentTab == newTab) return
+        currentTab = newTab
 
         CreativeModeTabGui.tabNavigationBar.tabButtons.forEachIndexed { i, it ->
             if (i.toUInt() != currentTab) it.isFocused = false
